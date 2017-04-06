@@ -7,7 +7,7 @@ and rate how much you want to see it.
 
 import numpy as np
 
-class Grid():
+class Grid:
     
     def __init__(self, itinerary, length):
         """Initialize the grid
@@ -25,6 +25,7 @@ class Grid():
         self.itinerary = [(n, int(2*t), r) for (n, t, r) in itinerary]
         self.buckets = length * 2 # length of the trip in buckets of half day
         self.grid = np.zeros([len(itinerary), self.buckets], dtype=object)
+
 
     def find_previous_bucket(row, col, prev_max):
         result = self.grid[row - 1][0]
@@ -76,15 +77,3 @@ class Grid():
         optim = self.grid[shape[0] - 1][shape[1] - 1]
         optim = map(lambda x: (x[0], float(x[1]) / 2, x[2]), optim)
         return optim
-
-
-if __name__ == "__main__":
-    length = 2
-    test = [("Tour Eiffiel", 0.5, 8), ("Louvre", 1.0, 7),
-            ("Notre Dam", 0.5, 5), ("Pompidou", 0.5, 4),
-            ("Sacre Coeur", 0.5, 6), ("Molin Rouge", 0.5, 5),
-            ("Disneyland", 1.0, 4), ("Gare du Nord", 0.5, 1)]
-    print "Lenght: {} and list: {}".format(length, test)
-    grid = Grid(test, length)
-    print grid.get_optim()
-
