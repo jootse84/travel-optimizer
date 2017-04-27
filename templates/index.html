@@ -1,0 +1,14 @@
+{% load static %}
+{% load render_bundle from webpack_loader %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+
+<ul class="title">
+	<li>trip</li>
+	<li>planner</li>
+  <li><hr/></li>
+	<li><b>A good trip always starts with a great planning</b>. This non greedy planner helps you plan your next trip!</li>
+</ul>
+
+<div id="form"></div>
+{% csrf_token %}
+{% render_bundle 'main' %}

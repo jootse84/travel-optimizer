@@ -1,0 +1,55 @@
+body {
+  background: white url("images/bg.jpg") no-repeat left top;
+  background-size: cover;
+}
+
+ul.title {
+	display: grid;
+  padding: 0;
+	color: white;
+	font-family: sans-serif;
+  margin-left: 20vw;
+  margin-right: 20vw;
+  margin-top: 4vw;
+  margin-bottom: 2vw;
+}
+
+ul li {
+  display: inline;
+}
+
+.form {
+	margin-top: 2vw;
+}
+
+.title li:nth-child(1) {
+  font-size: 22px;
+  font-weight: bold;
+  text-shadow: 2px 2px #333333;
+  transform: rotate(3deg);
+  color: rgb(0, 188, 212); /*rgb(49, 255, 106);*/
+  grid-column: 1;
+  grid-row: 1;
+  writing-mode: vertical-rl;
+}
+.title li:nth-child(2) {
+  transform: rotate(3deg);
+  text-shadow: 2px 2px #333333;
+  font-weight: bold;
+  font-size: 45px;
+  grid-column: 2;
+  grid-row: 1;
+}
+.title li:nth-child(3) {
+	font-size 2vw;
+  color: #444;
+	grid-column: 1 / span 2;
+	grid-row: 2;
+	text-align: center;
+}
+.title li:nth-child(4) {
+  font-size 2vw;
+  grid-column: 1 / span 2;
+  grid-row: 3;
+  text-align: center;
+}
