@@ -1,2 +1,4 @@
 **/*.pyc
+static/bundles
+venv/
 .cache
