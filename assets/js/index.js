@@ -25,7 +25,7 @@ import { Transition } from 'react-move';
 import CardSpot from './components/Card';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
-//import cities from './cities';
+import Cities from './cities.js';
 
 injectTapEventPlugin();
 
@@ -44,72 +44,72 @@ class App extends React.Component {
         display: 'grid',
         width: '70vw',
         margin: '20px 15vw 10px 15vw',
-				padding: '20px 20px 10px 20px',
+        padding: '20px 20px 10px 20px',
         gridTemplateColumns: '1fr 2fr',
       },
-			form2: {
-				textAlign: 'center',
-				width: '70vw',
-				margin: '20px 15vw 10px 15vw',
-				padding: '20px 20px 10px 20px',
-				gridTemplateColumns: '1fr 2fr',
-			},
+      form2: {
+        textAlign: 'center',
+        width: '70vw',
+        margin: '20px 15vw 10px 15vw',
+        padding: '20px 20px 10px 20px',
+        gridTemplateColumns: '1fr 2fr',
+      },
       city: {
         gridColumn: 1,
         gridRow: 1,
         marginTop: '-24px',
       },
       start_date: {
-				gridColumn: 1,
-				gridRow: 2,
+        gridColumn: 1,
+        gridRow: 2,
       },
       end_date: {
-				gridColumn: 1,
-				gridRow: 3,
+        gridColumn: 1,
+        gridRow: 3,
       },
-			spot: {
-				gridColumn: '2 / span 3',
-				gridRow: 1,
+      spot: {
+        gridColumn: '2 / span 3',
+        gridRow: 1,
         width: '100%',
         marginTop: '-24px',
-			},
-			timeslots: {
-				display: 'flex',
+      },
+      timeslots: {
+        display: 'flex',
         flexDirection: 'row',
         padding: '10px',
-				gridColumn: '2 / span 3',
-				gridRow: 2,
-			},
-      timeslot: {
-				flex: '1 1 auto',
-				display: 'inline-flex',
+        gridColumn: '2 / span 3',
+        gridRow: 2,
       },
-			rating: {
-				gridColumn: '2 / span 3',
-				gridRow: 3,
-			},
+      timeslot: {
+        flex: '1 1 auto',
+        display: 'inline-flex',
+      },
+      rating: {
+        gridColumn: '2 / span 3',
+        gridRow: 3,
+      },
       button: {
         margin: 12,
-				gridColumn: '1 / span 4',
-				gridRow: 6,
+        gridColumn: '1 / span 4',
+        gridRow: 6,
       },
       divider: {
         margin: '20px 0 20px 0 !important',
-				gridColumn: '1 / span 4',
-				gridRow: 4,
+        gridColumn: '1 / span 4',
+        gridRow: 4,
       },
       chips: {
         display: 'flex',
-    	  flexWrap: 'wrap',
-			  alignContent: 'flex-end',
+        flexWrap: 'wrap',
+        alignContent: 'flex-end',
         margin: '20px 5px 20px 5px',
-				gridColumn: '1 / span 4',
-				gridRow: 5,
+        gridColumn: '1 / span 4',
+        gridRow: 5,
       },
-			chip: {
-				/*flex: '1 1 auto',*/
-				margin: 4,
-			},
+      chip: {
+        /*flex: '1 1 auto',*/
+        margin: 4,
+      },
     };
 
     let endDate = new Date();
@@ -127,6 +127,7 @@ class App extends React.Component {
       endDate: null,
       loading: false,
       time: [true, false, false, false],
+      cities: new Cities(),
     };
 
     this.handleRatingChange = this.handleRatingChange.bind(this);
@@ -151,23 +152,23 @@ class App extends React.Component {
     this.setState(state)
   }
 
-	handleEndDateChange(event, x) {
-		let state = this.state
-		state.endDate = x
-		this.setState(state)
-	}
+  handleEndDateChange(event, x) {
+    let state = this.state
+    state.endDate = x
+    this.setState(state)
+  }
 
   handleRatingChange(value) {
     let spots = this.state.spots
     let time = (this.state.time.indexOf(true) + 1) * 0.5
-		let rating = 3
+    let rating = 3
     let newName = this.refs.spot_name.getValue()
     let index = spots.map((item, index) => item.name).indexOf(newName)
     let newSpot = { name: newName, rating: value, duration: time }
 
     if (index == -1) {
-			spots.push(newSpot);
-		} else {
+      spots.push(newSpot);
+    } else {
       spots[index] = newSpot;
     }
     this.setState({ spots, rating });
@@ -180,7 +181,7 @@ class App extends React.Component {
     this.setState(state)
   }
 
-	handleTextChange(event) {
+  handleTextChange(event) {
     let state = this.state
     state.disabled = event.target.value == ""
     state.value = event.target.value
@@ -188,22 +189,22 @@ class App extends React.Component {
   }
 
   handleDeleteChip(index) {
-		let state = this.state
+    let state = this.state
     state.spots.splice(index, 1);
-		this.setState({ state });
+    this.setState({ state });
   }
 
   handleToogle(index) {
-		let state = this.state
-		state.time = [false, false, false, false]
-		state.time[index] = true
-		this.setState(state)
+    let state = this.state
+    state.time = [false, false, false, false]
+    state.time[index] = true
+    this.setState(state)
   }
 
   handleOnTouchTap() {
     let state = this.state;
     let {spots, startDate, endDate, city} = this.state
-	  let oneDay = 24*60*60*1000;
+    let oneDay = 24*60*60*1000;
     endDate.setDate(endDate.getDate() + 1);
     let days = Math.round(Math.abs((endDate.getTime() - startDate.getTime()) / oneDay));
     let csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
@@ -225,11 +226,11 @@ class App extends React.Component {
   }
 
   clear() {
-		let state = this.state
-		state.disabled = true
-		state.value = ""
-		state.time = [true, false, false, false]
-		this.setState(state)
+    let state = this.state
+    state.disabled = true
+    state.value = ""
+    state.time = [true, false, false, false]
+    this.setState(state)
   }
 
   isFormCompleted() {
@@ -250,7 +251,7 @@ class App extends React.Component {
       content = (
         <Paper style={this.styles.form} zDepth={3}>
           
-					
+          
           <div style={{width: '50px'}}>
             <IconButton
               href={"/map?id=" + this.state.map} 
@@ -263,32 +264,32 @@ class App extends React.Component {
             style={{'margin': '20px 0 20px 0'}}
             data={itinerary}
             getKey={(item, index) => index}
-						duration={800}
-						// the "update" function returns the items normal state to animate
-						update={item => ({
-							translate: 1,
-							opacity: 1,
-							color: 'grey'
-						})}
-						// the "enter" function returns the items origin state when entering
-						enter={item => ({
-							translate: 0,
-							opacity: 0,
-							color: 'blue'
-						})}
-						// the "leave" function returns the items destination state when leaving
-						leave={item => ({
-							translate: 2,
-							opacity: 0,
-							color: 'red'
-						})}
-						easing='easeQuadIn'
-					>
+            duration={800}
+            // the "update" function returns the items normal state to animate
+            update={item => ({
+              translate: 1,
+              opacity: 1,
+              color: 'grey'
+            })}
+            // the "enter" function returns the items origin state when entering
+            enter={item => ({
+              translate: 0,
+              opacity: 0,
+              color: 'blue'
+            })}
+            // the "leave" function returns the items destination state when leaving
+            leave={item => ({
+              translate: 2,
+              opacity: 0,
+              color: 'red'
+            })}
+            easing='easeQuadIn'
+          >
             {data => {
               let acumTime = 0;
               return (
-								<span style={{'width': '50vw', 'margin': '20px 0 20px 0'}}>
-									{data.map(item => {
+                <span style={{'width': '50vw', 'margin': '20px 0 20px 0'}}>
+                  {data.map(item => {
                     let newday;
                     acumTime += item.data.duration
                     if (item.data.duration > 1 || (acumTime * 2) % 2 == 0) {
@@ -297,28 +298,28 @@ class App extends React.Component {
                         <hr/>
                       </div>);
                     }
-										return (
-											<span
-												key={item.key}
-												style={{
-													transform: `translateX(${100 * item.state.translate}px)`,
-													opacity: item.state.opacity,
-													color: item.state.color
-												}}
-											>
-												{item.data.spot} - { item.data.duration }
-												<Rating
-													value={item.data.rating}
-													max={item.data.rating}
-												/>
+                    return (
+                      <span
+                        key={item.key}
+                        style={{
+                          transform: `translateX(${100 * item.state.translate}px)`,
+                          opacity: item.state.opacity,
+                          color: item.state.color
+                        }}
+                      >
+                        {item.data.spot} - { item.data.duration }
+                        <Rating
+                          value={item.data.rating}
+                          max={item.data.rating}
+                        />
                         {newday}
-											</span>
-										)
-									})}
-								</span>
-						  )
+                      </span>
+                    )
+                  })}
+                </span>
+              )
             }}
-					</Transition>
+          </Transition>
         </Paper>
       );
     } else {
@@ -331,13 +332,14 @@ class App extends React.Component {
           {spot.name}
         </Chip>
       );
+      const { cities, city } = this.state;
       content = (
         <Paper style={this.styles.form} zDepth={3}>
           <AutoComplete
             ref="city"
             value={this.state.city}
             onUpdateInput={this.handleCityChange}
-            dataSource={["Barcelona", "Paris", "New York", "Berlin", "Oslo", "Rome", "Amsterdam", "Taipei", "Hong Kong"]}
+            dataSource={cities.getCities(city)}
             hintText="Barcelona"
             floatingLabelText="Introduce your destination"
             style={this.styles.city}
