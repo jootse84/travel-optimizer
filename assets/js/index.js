@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AutoComplete from 'material-ui/AutoComplete';
 import Paper from 'material-ui/Paper';
-import Chip from 'material-ui/Chip';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
-import Toggle from 'material-ui/Toggle';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
@@ -22,7 +19,10 @@ import { blue500 } from 'material-ui/styles/colors';
 import { Rating } from 'material-ui-rating';
 import { Transition } from 'react-move';
 
-import CardSpot from './components/Card';
+import Itinerary from './components/itinerary';
+import ItemList from './components/itemlist';
+import DateSelector from './components/dateselector';
+import TimeSlots from './components/timeslots';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Cities from './cities.js';
@@ -43,6 +43,7 @@ class App extends React.Component {
       form: {
         display: 'grid',
         width: '70vw',
+        opacity: '0.9',
         margin: '20px 15vw 10px 15vw',
         padding: '20px 20px 10px 20px',
         gridTemplateColumns: '1fr 2fr',
@@ -50,6 +51,7 @@ class App extends React.Component {
       form2: {
         textAlign: 'center',
         width: '70vw',
+				opacity: '0.9',
         margin: '20px 15vw 10px 15vw',
         padding: '20px 20px 10px 20px',
         gridTemplateColumns: '1fr 2fr',
@@ -58,35 +60,6 @@ class App extends React.Component {
         gridColumn: 1,
         gridRow: 1,
         marginTop: '-24px',
-      },
-      start_date: {
-        gridColumn: 1,
-        gridRow: 2,
-      },
-      end_date: {
-        gridColumn: 1,
-        gridRow: 3,
-      },
-      spot: {
-        gridColumn: '2 / span 3',
-        gridRow: 1,
-        width: '100%',
-        marginTop: '-24px',
-      },
-      timeslots: {
-        display: 'flex',
-        flexDirection: 'row',
-        padding: '10px',
-        gridColumn: '2 / span 3',
-        gridRow: 2,
-      },
-      timeslot: {
-        flex: '1 1 auto',
-        display: 'inline-flex',
-      },
-      rating: {
-        gridColumn: '2 / span 3',
-        gridRow: 3,
       },
       button: {
         margin: 12,
@@ -98,17 +71,16 @@ class App extends React.Component {
         gridColumn: '1 / span 4',
         gridRow: 4,
       },
-      chips: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignContent: 'flex-end',
-        margin: '20px 5px 20px 5px',
-        gridColumn: '1 / span 4',
-        gridRow: 5,
+// to remove!! after
+      spot: {
+        gridColumn: '2 / span 3',
+        gridRow: 1,
+        width: '100%',
+        marginTop: '-24px',
       },
-      chip: {
-        /*flex: '1 1 auto',*/
-        margin: 4,
+      rating: {
+        gridColumn: '2 / span 3',
+        gridRow: 3,
       },
     };
 
@@ -119,6 +91,7 @@ class App extends React.Component {
       spots: [],
       rating: 3,
       city: "",
+      cities: [],
       value: "",
       disabled: true,
       initialStartDate: new Date(),
@@ -126,25 +99,26 @@ class App extends React.Component {
       startDate: null,
       endDate: null,
       loading: false,
-      time: [true, false, false, false],
-      cities: new Cities(),
+      timeslot: 0,
     };
+
+    this.cities = new Cities();
+
+    this.STATES = {
+      LOADING: 0,
+      WAITING: 1,
+      READY: 2
+    }
 
     this.handleRatingChange = this.handleRatingChange.bind(this);
     this.handleDeleteChip = this.handleDeleteChip.bind(this);
-    this.handleTextChange = this.handleTextChange.bind(this);
     this.handleCityChange = this.handleCityChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
-    this.handleToogle = this.handleToogle.bind(this);
     this.handleOnTouchTap = this.handleOnTouchTap.bind(this);
-    this.isFormCompleted = this.isFormCompleted.bind(this);
+    this.formReady = this.formReady.bind(this);
     this.clear = this.clear.bind(this);
   }
-
-  /*componentWillMount() {
-    debugger
-  }*/
 
   handleStartDateChange(event, x) {
     let state = this.state
@@ -160,7 +134,7 @@ class App extends React.Component {
 
   handleRatingChange(value) {
     let spots = this.state.spots
-    let time = (this.state.time.indexOf(true) + 1) * 0.5
+    let time = (this.state.timeslot + 1) * 0.5
     let rating = 3
     let newName = this.refs.spot_name.getValue()
     let index = spots.map((item, index) => item.name).indexOf(newName)
@@ -176,29 +150,25 @@ class App extends React.Component {
   }
 
   handleCityChange(value) {
-    let state = this.state
-    state.city = value
-    this.setState(state)
-  }
-
-  handleTextChange(event) {
-    let state = this.state
-    state.disabled = event.target.value == ""
-    state.value = event.target.value
-    this.setState(state)
+    if (value == '') {
+      this.setState({
+        cities: [],
+        city: ''
+      });
+    } else {
+      this.cities.getCities(value, (result) => {
+        let state = this.state;
+        state.city = value;
+        state.cities = result;
+        this.setState(state);
+      });
+    }
   }
 
   handleDeleteChip(index) {
     let state = this.state
     state.spots.splice(index, 1);
     this.setState({ state });
-  }
-
-  handleToogle(index) {
-    let state = this.state
-    state.time = [false, false, false, false]
-    state.time[index] = true
-    this.setState(state)
   }
 
   handleOnTouchTap() {
@@ -226,32 +196,41 @@ class App extends React.Component {
   }
 
   clear() {
-    let state = this.state
-    state.disabled = true
-    state.value = ""
-    state.time = [true, false, false, false]
-    this.setState(state)
+    let state = this.state;
+    state.disabled = true;
+    state.value = "";
+    state.timeslot = 0;
+    this.setState(state);
   }
 
-  isFormCompleted() {
-    let { spots, startDate, endDate, city } = this.state
+  formReady() {
+    let { spots, startDate, endDate, city } = this.state;
     return (spots.length > 0 && startDate && endDate && city)
   }
 
   render() {
-    let { spots, initialStartDate, initialEndDate, startDate, endDate, itinerary, loading} = this.state;
+    let {
+      spots,
+      initialStartDate,
+      initialEndDate,
+      startDate,
+      endDate,
+      itinerary,
+      loading
+    } = this.state;
     let content;
-    const colors = ["red", "green", "blue"]
 
     if (loading) {
-      content = (<Paper style={this.styles.form2} zDepth={3}>
-        <img src="static/images/gears.svg" style={{'margin': '50px', 'opacity':'0.6'}}/>
-      </Paper>)
+      content = (
+        <Paper style={this.styles.form2} zDepth={3}>
+          <img
+            src="static/images/gears.svg"
+            style={{'margin': '50px', 'opacity':'0.6'}}/>
+        </Paper>
+      );
     } else if (itinerary) {
       content = (
         <Paper style={this.styles.form} zDepth={3}>
-          
-          
           <div style={{width: '50px'}}>
             <IconButton
               href={"/map?id=" + this.state.map} 
@@ -259,167 +238,60 @@ class App extends React.Component {
               <MapsMap color={ blue500 } />
             </IconButton>
           </div>
-
-          <Transition
-            style={{'margin': '20px 0 20px 0'}}
-            data={itinerary}
-            getKey={(item, index) => index}
-            duration={800}
-            // the "update" function returns the items normal state to animate
-            update={item => ({
-              translate: 1,
-              opacity: 1,
-              color: 'grey'
-            })}
-            // the "enter" function returns the items origin state when entering
-            enter={item => ({
-              translate: 0,
-              opacity: 0,
-              color: 'blue'
-            })}
-            // the "leave" function returns the items destination state when leaving
-            leave={item => ({
-              translate: 2,
-              opacity: 0,
-              color: 'red'
-            })}
-            easing='easeQuadIn'
-          >
-            {data => {
-              let acumTime = 0;
-              return (
-                <span style={{'width': '50vw', 'margin': '20px 0 20px 0'}}>
-                  {data.map(item => {
-                    let newday;
-                    acumTime += item.data.duration
-                    if (item.data.duration > 1 || (acumTime * 2) % 2 == 0) {
-                      newday = (<div style={{'textAlign': 'right', 'fontSize': '10px'}}>
-                        day {parseInt(acumTime)}
-                        <hr/>
-                      </div>);
-                    }
-                    return (
-                      <span
-                        key={item.key}
-                        style={{
-                          transform: `translateX(${100 * item.state.translate}px)`,
-                          opacity: item.state.opacity,
-                          color: item.state.color
-                        }}
-                      >
-                        {item.data.spot} - { item.data.duration }
-                        <Rating
-                          value={item.data.rating}
-                          max={item.data.rating}
-                        />
-                        {newday}
-                      </span>
-                    )
-                  })}
-                </span>
-              )
-            }}
-          </Transition>
+          <Itinerary
+            itinerary={itinerary} />
         </Paper>
       );
     } else {
-      const listItems = spots.map((spot, index) =>
-        <Chip
-          key={spot.name}
-          onRequestDelete={() => this.handleDeleteChip(index)}
-          style={this.styles.chip}
-        >
-          {spot.name}
-        </Chip>
-      );
-      const { cities, city } = this.state;
+      const { city, cities, timeslot } = this.state;
       content = (
         <Paper style={this.styles.form} zDepth={3}>
           <AutoComplete
             ref="city"
-            value={this.state.city}
-            onUpdateInput={this.handleCityChange}
-            dataSource={cities.getCities(city)}
+            value={ city }
+            onUpdateInput={ this.handleCityChange }
+            dataSource={ cities }
             hintText="Barcelona"
             floatingLabelText="Introduce your destination"
-            style={this.styles.city}
+            style={ this.styles.city }
           />
-          <DatePicker
-            hintText="Start Date"
-            style={this.styles.start_date}
-            minDate={new Date()}
+
+          <DateSelector
             maxDate={endDate? endDate : initialEndDate}
-            onChange={this.handleStartDateChange}
-          />
-          <DatePicker
-            hintText="End Date"
-            style={this.styles.end_date}
             minDate={startDate? startDate : initialStartDate}
-            onChange={this.handleEndDateChange}
-          />
+            handleStartDateChange={this.handleStartDateChange}
+            handleEndDateChange={this.handleEndDateChange}/>
+
           <TextField
             ref="spot_name"
             value={this.state.value}
             onChange={this.handleTextChange}
             hintText="Rate with stars to add your new spot in your wishlist"
             floatingLabelText="Introduce the name of the spot to visit"
-            style={this.styles.spot}
-          />
-          <div style={this.styles.timeslots}>
-            <Toggle
-              label="&frac12; day"
-              labelPosition="right"
-              style={this.styles.toggle}
-              toogled={this.state.time[0]}
-              defaultToggled={this.state.time[0]}
-              style={this.styles.timeslot}
-              onToggle={(event, isInputChecked) => this.handleToogle(0)}
-            />
-            <Toggle
-              label="1 day"
-              labelPosition="right"
-              style={this.styles.toggle}
-              toogled={this.state.time[1]}
-              defaultToggled={this.state.time[1]}
-              style={this.styles.timeslot}
-              onToggle={(event, isInputChecked) => this.handleToogle(1)}
-            />
-            <Toggle
-              label="1+&frac12; day"
-              labelPosition="right"
-              toogled={this.state.time[2]}
-              style={this.styles.toggle}
-              toogled={this.state.time[2]}
-              defaultToggled={this.state.time[2]}
-              style={this.styles.timeslot}
-              onToggle={(event, isInputChecked) => this.handleToogle(2)}
-            />
-            <Toggle
-              label="2 days"
-              labelPosition="right"
-              style={this.styles.toggle}
-              toogled={this.state.time[3]}
-              defaultToggled={this.state.time[3]}
-              style={this.styles.timeslot}
-              onToggle={(event, isInputChecked) => this.handleToogle(3)}
-            />
-          </div>
+            style={this.styles.spot} />
+
+          <TimeSlots
+            handleToogle={ this.handleToogle }
+            timeslot={ timeslot } />
+
           <Rating
             ref="rating"
             value={this.state.rating}
             max={6}
             onChange={this.handleRatingChange}
             disabled={this.state.disabled}
-            style={this.styles.rating}
-          />
+            style={this.styles.rating} />
+
           <Divider style={this.styles.divider}/>
-          <div style={this.styles.chips}>
-            {listItems}
-          </div>
+
+          <ItemList
+            items={spots}
+            handleDeleteChip={this.handleDeleteChip} />
+
           <RaisedButton
             label="Plan my trip!"
             primary={true}
-            disabled={!this.isFormCompleted()}
+            disabled={!this.formReady()}
             style={this.styles.button}
             onTouchTap={this.handleOnTouchTap}
           />
