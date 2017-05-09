@@ -14,8 +14,7 @@ export default class TimeSlots extends React.Component  {
         display: 'flex',
         flexDirection: 'row',
         padding: '10px',
-        gridColumn: '2 / span 3',
-        gridRow: 2,
+        height: '35px',
       },
       timeslot: {
         flex: '1 1 auto',

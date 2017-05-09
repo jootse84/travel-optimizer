@@ -13,19 +13,13 @@ export default class ItemCreator extends React.Component  {
 
     this.styles = {
       item_creator: {
-        gridColumn: '2 / span 3',
-        gridRow: '1 / span 3',
         width: '100%',
       },
       spot: {
-        gridColumn: '2 / span 3',
-        gridRow: 1,
-        width: '100%',
         marginTop: '-24px',
       },
       rating: {
-        gridColumn: '2 / span 3',
-        gridRow: 3,
+        height: '35px',
       },
     };
 
@@ -105,6 +99,7 @@ export default class ItemCreator extends React.Component  {
           value={ value }
           onChange={ this.handleTextChange }
           hintText={ text1 }
+          fullWidth={ true }
           floatingLabelText={ text2 }
           style={ this.styles.spot } />
 

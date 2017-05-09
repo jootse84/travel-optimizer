@@ -7,7 +7,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AutoComplete from 'material-ui/AutoComplete';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
-import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 // icons at: https://material.io/icons/#ic_map
@@ -33,15 +32,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.styles = {
-      wrapper: {
-        display: 'flex',
-        flexWrap: 'wrap',
-      },
-      toogle: {
-        marginBottom: 16,
-      },
       form: {
-        display: 'grid',
         width: '70vw',
         opacity: '0.9',
         margin: '20px 15vw 10px 15vw',
@@ -57,20 +48,25 @@ class App extends React.Component {
         gridTemplateColumns: '1fr 2fr',
       },
       city: {
-        gridColumn: 1,
-        gridRow: 1,
         marginTop: '-24px',
       },
       button: {
-        margin: 12,
-        gridColumn: '1 / span 4',
-        gridRow: 6,
+        width: '100%',
       },
-      divider: {
-        margin: '20px 0 20px 0 !important',
-        gridColumn: '1 / span 4',
-        gridRow: 4,
+      flex: {
+        display: 'flex',
+        flexFlow: 'row',
+        flexWrap: 'wrap',
       },
+      flex1: {
+        flex: 1,
+        minWidth: '200px',
+        margin: '5px',
+      },
+      flex2: {
+        flex: 2,
+        margin: '5px',
+      }
     };
 
     this.state = {
@@ -231,39 +227,41 @@ class App extends React.Component {
 
       content = (
         <Paper style={this.styles.form} zDepth={3}>
-          <AutoComplete
-            ref="city"
-            value={ city }
-            onUpdateInput={ this.handleCityChange }
-            dataSource={ cities }
-            hintText="Barcelona"
-            floatingLabelText="Introduce your destination"
-            style={ this.styles.city }
-          />
+          <div style={this.styles.flex}>
+            <div style={this.styles.flex1}>
+              <AutoComplete
+                ref="city"
+                value={ city }
+                onUpdateInput={ this.handleCityChange }
+                dataSource={ cities }
+                fullWidth={ true }
+                hintText="Barcelona"
+                floatingLabelText="Introduce your destination"
+                style={ this.styles.city }
+              />
+              <DateSelector
+                maxDate={ endDate }
+                minDate={ startDate }
+                handleStartDateChange={ this.handleStartDateChange }
+                handleEndDateChange={ this.handleEndDateChange }/>
+            </div>
 
-          <DateSelector
-            maxDate={ endDate }
-            minDate={ startDate }
-            handleStartDateChange={ this.handleStartDateChange }
-            handleEndDateChange={ this.handleEndDateChange }/>
-
-          <ItemCreator
-            spots={ spots }
-            handleUpdateSpots={ this.handleUpdateSpots }/>
-
-          <Divider style={this.styles.divider}/>
+            <div style={this.styles.flex2}>
+              <ItemCreator
+                spots={ spots }
+                handleUpdateSpots={ this.handleUpdateSpots }/>
+            </div>
+          </div>
 
           <ItemList
             items={spots}
             handleDeleteChip={this.handleDeleteChip} />
-
           <RaisedButton
             label="Plan my trip!"
             primary={true}
             disabled={!this.formReady()}
             style={this.styles.button}
-            onTouchTap={this.handleOnTouchTap}
-          />
+            onTouchTap={this.handleOnTouchTap} />
         </Paper>
       );
     }

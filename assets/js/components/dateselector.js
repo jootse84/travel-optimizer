@@ -15,12 +15,11 @@ export default class DateSelector extends React.Component  {
       initialEndDate: endDate,
     };
 
-    this.styles = {
-      data_selector: {
-        gridColumn: 1,
-        gridRow: '2 / span 4',
+    this.style = {
+      date: {
+        width: '100%',
       }
-    }
+    };
   }
   render() {
     const {
@@ -36,15 +35,19 @@ export default class DateSelector extends React.Component  {
     } = this.state
 
     return (
-      <div style={this.styles.data_selector}>
+      <div>
         <DatePicker
           hintText="Start Date"
+          style={ this.style.date }
+          fullWidth={ true }
           minDate={ new Date() }
           maxDate={ maxDate? maxDate : initialEndDate}
           onChange={ handleStartDateChange }
         />
         <DatePicker
           hintText="End Date"
+          style={ this.style.date }
+          fullWidth={ true }
           minDate={ minDate? minDate : initialStartDate}
           onChange={ handleEndDateChange }
         />
