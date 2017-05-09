@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types'
+import TextField from 'material-ui/TextField';
+import { Rating } from 'material-ui-rating';
 
 import TimeSlots from './timeslots';
 
@@ -10,6 +12,11 @@ export default class ItemCreator extends React.Component  {
     super(props);
 
     this.styles = {
+      item_creator: {
+        gridColumn: '2 / span 3',
+        gridRow: '1 / span 3',
+        width: '100%',
+      },
       spot: {
         gridColumn: '2 / span 3',
         gridRow: 1,
@@ -40,7 +47,7 @@ export default class ItemCreator extends React.Component  {
       rating: 3,
       value: "",
       disable: true,
-      timeslot; 0
+      timeslot: 0
     });
   }
 
@@ -58,10 +65,8 @@ export default class ItemCreator extends React.Component  {
   }
 
   handleRatingChange(value) {
-    let {
-      spots,
-      timeslot
-    } = this.state;
+    let { timeslot } = this.state;
+    let { spots } = this.props;
 
     let newName = this.refs.spot_name.getValue();
     let index = spots.map((item, index) => item.name).indexOf(newName);
@@ -94,7 +99,7 @@ export default class ItemCreator extends React.Component  {
     } = this.state;
 
     return (
-      <span>
+      <div style={ this.styles.item_creator }>
         <TextField
           ref="spot_name"
           value={ value }
@@ -114,7 +119,7 @@ export default class ItemCreator extends React.Component  {
           onChange={ this.handleRatingChange }
           disabled={ disabled }
           style={ this.styles.rating } />
-      </span>
+      </div>
     );
   }
 }

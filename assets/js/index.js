@@ -16,13 +16,13 @@ import MapsMap from 'material-ui/svg-icons/maps/map';
 
 import { blue500 } from 'material-ui/styles/colors';
 
-import { Rating } from 'material-ui-rating';
 import { Transition } from 'react-move';
 
 import Itinerary from './components/itinerary';
 import ItemList from './components/itemlist';
 import DateSelector from './components/dateselector';
 import TimeSlots from './components/timeslots';
+import ItemCreator from './components/itemcreator';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Cities from './cities.js';
@@ -71,21 +71,7 @@ class App extends React.Component {
         gridColumn: '1 / span 4',
         gridRow: 4,
       },
-// to remove!! after
-      spot: {
-        gridColumn: '2 / span 3',
-        gridRow: 1,
-        width: '100%',
-        marginTop: '-24px',
-      },
-      rating: {
-        gridColumn: '2 / span 3',
-        gridRow: 3,
-      },
     };
-
-    let endDate = new Date();
-    endDate.setYear(endDate.getUTCFullYear() + 100);
 
     this.state = {
       spots: [],
@@ -94,8 +80,6 @@ class App extends React.Component {
       cities: [],
       value: "",
       disabled: true,
-      initialStartDate: new Date(),
-      initialEndDate: endDate,
       startDate: null,
       endDate: null,
       loading: false,
@@ -110,7 +94,7 @@ class App extends React.Component {
       READY: 2
     }
 
-    this.handleRatingChange = this.handleRatingChange.bind(this);
+    this.handleUpdateSpots = this.handleUpdateSpots.bind(this);
     this.handleDeleteChip = this.handleDeleteChip.bind(this);
     this.handleCityChange = this.handleCityChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -132,21 +116,8 @@ class App extends React.Component {
     this.setState(state)
   }
 
-  handleRatingChange(value) {
-    let spots = this.state.spots
-    let time = (this.state.timeslot + 1) * 0.5
-    let rating = 3
-    let newName = this.refs.spot_name.getValue()
-    let index = spots.map((item, index) => item.name).indexOf(newName)
-    let newSpot = { name: newName, rating: value, duration: time }
-
-    if (index == -1) {
-      spots.push(newSpot);
-    } else {
-      spots[index] = newSpot;
-    }
-    this.setState({ spots, rating });
-    this.clear();
+  handleUpdateSpots(spots) {
+    this.setState({ spots });
   }
 
   handleCityChange(value) {
@@ -200,6 +171,7 @@ class App extends React.Component {
     state.disabled = true;
     state.value = "";
     state.timeslot = 0;
+    this.spots = [];
     this.setState(state);
   }
 
@@ -211,8 +183,6 @@ class App extends React.Component {
   render() {
     let {
       spots,
-      initialStartDate,
-      initialEndDate,
       startDate,
       endDate,
       itinerary,
@@ -220,7 +190,8 @@ class App extends React.Component {
     } = this.state;
     let content;
 
-    if (loading) {
+    if (this.state.loading) {
+
       content = (
         <Paper style={this.styles.form2} zDepth={3}>
           <img
@@ -228,12 +199,18 @@ class App extends React.Component {
             style={{'margin': '50px', 'opacity':'0.6'}}/>
         </Paper>
       );
-    } else if (itinerary) {
+
+    } else if (this.state.itinerary) {
+      let {
+        map,
+        itinerary
+      } = this.state;
+
       content = (
         <Paper style={this.styles.form} zDepth={3}>
           <div style={{width: '50px'}}>
             <IconButton
-              href={"/map?id=" + this.state.map} 
+              href={"/map?id=" + map} 
               tooltip="Show me a map!">
               <MapsMap color={ blue500 } />
             </IconButton>
@@ -242,8 +219,16 @@ class App extends React.Component {
             itinerary={itinerary} />
         </Paper>
       );
+
     } else {
-      const { city, cities, timeslot } = this.state;
+
+      const {
+        city,
+        cities,
+        spots,
+        timeslot
+      } = this.state;
+
       content = (
         <Paper style={this.styles.form} zDepth={3}>
           <AutoComplete
@@ -257,30 +242,14 @@ class App extends React.Component {
           />
 
           <DateSelector
-            maxDate={endDate? endDate : initialEndDate}
-            minDate={startDate? startDate : initialStartDate}
-            handleStartDateChange={this.handleStartDateChange}
-            handleEndDateChange={this.handleEndDateChange}/>
+            maxDate={ endDate }
+            minDate={ startDate }
+            handleStartDateChange={ this.handleStartDateChange }
+            handleEndDateChange={ this.handleEndDateChange }/>
 
-          <TextField
-            ref="spot_name"
-            value={this.state.value}
-            onChange={this.handleTextChange}
-            hintText="Rate with stars to add your new spot in your wishlist"
-            floatingLabelText="Introduce the name of the spot to visit"
-            style={this.styles.spot} />
-
-          <TimeSlots
-            handleToogle={ this.handleToogle }
-            timeslot={ timeslot } />
-
-          <Rating
-            ref="rating"
-            value={this.state.rating}
-            max={6}
-            onChange={this.handleRatingChange}
-            disabled={this.state.disabled}
-            style={this.styles.rating} />
+          <ItemCreator
+            spots={ spots }
+            handleUpdateSpots={ this.handleUpdateSpots }/>
 
           <Divider style={this.styles.divider}/>
 

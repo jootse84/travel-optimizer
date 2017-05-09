@@ -7,6 +7,14 @@ import DatePicker from 'material-ui/DatePicker';
 export default class DateSelector extends React.Component  {
   constructor(props) {
     super(props);
+
+    let endDate = new Date();
+    endDate.setYear(endDate.getUTCFullYear() + 100);
+    this.state = {
+      initialStartDate: new Date(),
+      initialEndDate: endDate,
+    };
+
     this.styles = {
       data_selector: {
         gridColumn: 1,
@@ -22,17 +30,22 @@ export default class DateSelector extends React.Component  {
       minDate
     } = this.props
 
+    const {
+      initialStartDate,
+      initialEndDate
+    } = this.state
+
     return (
       <div style={this.styles.data_selector}>
         <DatePicker
           hintText="Start Date"
           minDate={ new Date() }
-          maxDate={ maxDate }
+          maxDate={ maxDate? maxDate : initialEndDate}
           onChange={ handleStartDateChange }
         />
         <DatePicker
           hintText="End Date"
-          minDate={ minDate }
+          minDate={ minDate? minDate : initialStartDate}
           onChange={ handleEndDateChange }
         />
       </div>

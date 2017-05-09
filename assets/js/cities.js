@@ -8,11 +8,13 @@ import axios from 'axios';
 //const FlagIcon = FlagIconFactory(React)
 
 export default class Cities {
+
   constructor () {
-    let csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     this.api = axios.create({
       baseURL: '/',
-      headers: {'X-CSRFToken': csrftoken}
+      headers: {
+        'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      }
     });
   }
 
@@ -31,7 +33,7 @@ export default class Cities {
           };
         } else {
           return {
-            text: `${city.name} (${city.country})`,
+            text: city.name,
             value: (
               <MenuItem
                 primaryText={city.name}
