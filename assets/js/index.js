@@ -15,13 +15,11 @@ import MapsMap from 'material-ui/svg-icons/maps/map';
 
 import { blue500 } from 'material-ui/styles/colors';
 
-import { Transition } from 'react-move';
 
-import Itinerary from './components/itinerary';
-import ItemList from './components/itemlist';
-import DateSelector from './components/dateselector';
-import TimeSlots from './components/timeslots';
-import ItemCreator from './components/itemcreator';
+import Itinerary from './components/Itinerary';
+import ItemList from './components/ItemList';
+import DateSelector from './components/DateSelector';
+import ItemCreator from './components/ItemCreator';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Cities from './cities.js';
@@ -124,10 +122,10 @@ class App extends React.Component {
       });
     } else {
       this.cities.getCities(value, (result) => {
-        let state = this.state;
-        state.city = value;
-        state.cities = result;
-        this.setState(state);
+        this.setState({
+          cities: result,
+          city: value
+        });
       });
     }
   }
@@ -235,7 +233,8 @@ class App extends React.Component {
                 onUpdateInput={ this.handleCityChange }
                 dataSource={ cities }
                 fullWidth={ true }
-                hintText="Barcelona"
+                filter={ AutoComplete.caseInsensitiveFilter }
+                hintText="Enter city or country"
                 floatingLabelText="Introduce your destination"
                 style={ this.styles.city }
               />

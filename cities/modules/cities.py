@@ -15,7 +15,7 @@ class Cities:
                 }, data[key]))
 
             # unique values
-            self.cities = dict((v['name'] + v['country'], v) for v in self.cities).values()
+            self.cities = list(dict((v['name'] + v['country'], v) for v in self.cities).values())
 
     def get(self, str_filter, top=5):
-        return list(filter(lambda city: str_filter in city['name'], self.cities))[:top]
+        return list(filter(lambda city: str_filter.lower() in city['name'].lower(), self.cities))[:top]

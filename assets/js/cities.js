@@ -20,7 +20,7 @@ export default class Cities {
 
   getCities (filter, fn) {
     this.api.get(`cities/${filter}/`, {}).then(res => {
-      fn(res.data.map(function (city) {
+      let result = res.data.map(function (city) {
         if (city.isCountry) {
           return {
             text: city.name,
@@ -43,7 +43,8 @@ export default class Cities {
             ),
           };
         }
-      }));
+      });
+      fn(result);
     });
   }
 };

@@ -28,8 +28,14 @@ class Grid:
         """
         def get_info(spot):
             name, time, rating = spot
-            wiki = wikipedia.page(wikipedia.search(city + " " + name)[0])
-            return (name, int(2*time), rating, wiki.content, wiki.images[0])
+            options = wikipedia.search(city + " " + name)
+            content = ""
+            images = []
+            if len(options) > 0:
+                wiki = wikipedia.page(options[0])
+                content = wiki.content
+                images = wiki.images[0]
+            return (name, int(2*time), rating, content, images)
 
         self.itinerary = list(map(get_info, itinerary))
         self.buckets = length * 2 # length of the trip in buckets of half day

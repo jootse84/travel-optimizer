@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import TextField from 'material-ui/TextField';
 import { Rating } from 'material-ui-rating';
 
-import TimeSlots from './timeslots';
+import TimeSlots from './TimeSlots';
 
 export default class ItemCreator extends React.Component  {
 
@@ -82,7 +82,7 @@ export default class ItemCreator extends React.Component  {
 
   render() {
     const text1 = "Rate with stars to add your new spot in your wishlist";
-    const text2 = "Introduce the name of the spot to visit";
+    const text2 = "Add attractions of your choice";
     const maxRate = 6;
 
     const {
