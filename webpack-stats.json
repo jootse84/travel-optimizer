@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main-506a828878a87a5951d5.js","path":"/home/jose/RC/trip-advisor/static/bundles/main-506a828878a87a5951d5.js"}]},"error":"ModuleNotFoundError","message":"Module not found: Error: Can't resolve './Timeslots' in '/home/jose/RC/trip-advisor/assets/js/components'"}
+{"status":"done","chunks":{"main":[{"name":"main-8b04828b8048cc2f2509.js","path":"/home/jose/RC/trip-advisor/static/bundles/main-8b04828b8048cc2f2509.js"}]}}

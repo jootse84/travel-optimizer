@@ -149,7 +149,7 @@ class App extends React.Component {
 
     axios.create({
       baseURL: '/',
-      timeout: 50000,
+      timeout: 150000,
       headers: {'X-CSRFToken': csrftoken}
     }).post('plan', { spots, days, city }).then(res => {
       let state = this.state;

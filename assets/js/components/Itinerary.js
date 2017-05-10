@@ -1,24 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import PropTypes from 'prop-types';
+import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
-import { Transition } from 'react-move';
+import { Transition } from 'react-move'
+import { Rating } from 'material-ui-rating';
 
 class ItineraryCard extends React.Component  {
   constructor(props) {
     super(props);
-    this.styles = {
-      card: {
-        transform: `translateX(${100 * props.item.state.translate}px)`,
-        opacity: props.item.state.opacity,
-        color: props.item.state.color
-      },
-    }
   }
+
   render() {
-    const { item, acumTime } = this.props;
+    const { item, acumTime, style } = this.props;
+    let { image, duration, spot, rating, content, city } = item;
+    spot = spot.replace(/\b\w/g, l => l.toUpperCase()); // capitalize
+    content = content.substring(0, 200);
+
     let newday;
-    if (item.data.duration > 1 || (acumTime * 2) % 2 == 0) {
+    if (duration > 1 || (acumTime * 2) % 2 == 0) {
       newday = (
         <div style={{'textAlign': 'right', 'fontSize': '10px'}}>
           day {parseInt(acumTime)}
@@ -26,17 +27,28 @@ class ItineraryCard extends React.Component  {
         </div>
       );
     }
+    const cardTitle = (
+      <CardTitle title={ spot } subtitle={ city } />
+    );
+
     return (
-      <span
-        key={item.key}
-        style={this.styles.card} >
-        {item.data.spot} - { item.data.duration }
-        <Rating
-          value={item.data.rating}
-          max={item.data.rating}
-        />
-        {newday}
-      </span>
+      <Card style={ style }>
+        <CardHeader
+          title={ spot }
+          subtitle={ city }
+          avatar={ image } />
+        <CardMedia overlay={ cardTitle }>
+          <img src={ image } style={{maxHeight: '500px'}} />
+        </CardMedia>
+        <CardTitle title={ spot } subtitle={ city } />
+        <CardText>
+          { content } 
+        </CardText>
+        <CardActions>
+          <FlatButton label="See More" />
+          <FlatButton label="Remove" />
+        </CardActions>
+      </Card>
     );
   }
 }
@@ -46,51 +58,37 @@ export default class Itinerary extends React.Component  {
   constructor(props) {
     super(props);
     this.styles = {
+      transition: {
+        'margin': '20px 0 20px 0'
+      },
+      flex: { //{'width': '50vw', 'margin': '20px 0 20px 0'}
+        display: 'flex',
+        flexFlow: 'row',
+        flexWrap: 'wrap',
+      },
+      child: {
+        flexGrow: '1',
+        margin: '10px 0 0 2%',
+        minWidth: '250px',
+        width: 'calc(100% * (1/4) - 10px - 1px)',
+      }
     }
   }
   render() {
+    let acumTime = 0;
     return (
-      <Transition
-        style={{'margin': '20px 0 20px 0'}}
-        data={this.props.itinerary}
-        getKey={(item, index) => index}
-        duration={800}
-        // the "update" function returns the items normal state to animate
-        update={item => ({
-          translate: 1,
-          opacity: 1,
-          color: 'grey'
-        })}
-        // the "enter" function returns the items origin state when entering
-        enter={item => ({
-          translate: 0,
-          opacity: 0,
-          color: 'blue'
-        })}
-        // the "leave" function returns the items destination state when leaving
-        leave={item => ({
-          translate: 2,
-          opacity: 0,
-          color: 'red'
-        })}
-        easing='easeQuadIn'
-      >
-        {data => {
-          let acumTime = 0;
+      <div style={ this.styles.flex }>
+        {this.props.itinerary.map(item => {
+          acumTime += item.duration;
           return (
-            <span style={{'width': '50vw', 'margin': '20px 0 20px 0'}}>
-              {data.map(item => {
-                acumTime += item.data.duration
-                return (
-                  <ItineraryCard
-                    acumTime={acumTime}
-                    item={item} />
-                )
-              })}
-            </span>
-          )
-        }}
-      </Transition>
+            <ItineraryCard
+              style={ this.styles.child }
+              key={ item.spot }
+              acumTime={ acumTime }
+              item={ item } />
+          );
+        })}
+      </div>
     );
   }
 }

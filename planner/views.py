@@ -20,7 +20,8 @@ def plan(request):
             "duration": spot[1],
             "rating": spot[2],
             "content": spot[3],
-            "image": spot[4]
+            "image": spot[4],
+            "city": body["city"]
         })
 
     result = {}
