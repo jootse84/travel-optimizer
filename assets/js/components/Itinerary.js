@@ -7,9 +7,15 @@ import FlatButton from 'material-ui/FlatButton';
 import { Transition } from 'react-move'
 import { Rating } from 'material-ui-rating';
 
-class ItineraryCard extends React.Component  {
+class ItineraryCard extends React.Component {
   constructor(props) {
     super(props);
+
+    this.styles = {
+      image: {
+        maxHeight: '500px'
+      }
+    };
   }
 
   render() {
@@ -38,7 +44,7 @@ class ItineraryCard extends React.Component  {
           subtitle={ city }
           avatar={ image } />
         <CardMedia overlay={ cardTitle }>
-          <img src={ image } style={{maxHeight: '500px'}} />
+          <img src={ image } style={ this.styles.image } />
         </CardMedia>
         <CardTitle title={ spot } subtitle={ city } />
         <CardText>
