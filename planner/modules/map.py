@@ -55,4 +55,5 @@ class Map:
             t.start()
 
         except:
+            print('error retrieving city - {}'.format(city))
             return

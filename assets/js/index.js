@@ -31,6 +31,7 @@ class App extends React.Component {
     super(props);
     this.styles = {
       form: {
+        display: 'table',
         width: '70vw',
         opacity: '0.9',
         margin: '20px 15vw 10px 15vw',
@@ -184,13 +185,17 @@ class App extends React.Component {
     } = this.state;
     let content;
 
+    const loadingImg = (
+      <img
+        src="static/images/gears.svg"
+        style={ { 'margin': '50px', 'opacity': '0.6' } }/>
+    );
+
     if (this.state.loading) {
 
       content = (
         <Paper style={this.styles.form2} zDepth={3}>
-          <img
-            src="static/images/gears.svg"
-            style={{'margin': '50px', 'opacity':'0.6'}}/>
+          { loadingImg }
         </Paper>
       );
 
@@ -200,17 +205,37 @@ class App extends React.Component {
         itinerary
       } = this.state;
 
+      let mapDiv = loadingImg;
+      if (map) {
+        mapDiv = (
+          <iframe
+            src={ `/map?id=${map}` }
+            style={{ width: 'calc(45%)' }} />
+        );
+      }
+
+      /*
+        <div style={ { width: '50px' } }>
+          <IconButton
+            href={"/map?id=" + map} 
+            tooltip="Show me a map!">
+            <MapsMap color={ blue500 } />
+          </IconButton>
+        </div>
+      */
+
       content = (
-        <Paper style={this.styles.form} zDepth={3}>
-          <div style={{width: '50px'}}>
-            <IconButton
-              href={"/map?id=" + map} 
-              tooltip="Show me a map!">
-              <MapsMap color={ blue500 } />
-            </IconButton>
+        <Paper style={ this.styles.form } zDepth={ 3 }>
+
+          <div style={ { width: 'calc(100%)' } }>
+            <div style={ { width: 'calc(50%)', float: 'left' } }>
+              <Itinerary
+                itinerary={ itinerary } />
+            </div>
+            <div style={ { marginLeft: 'calc(55%)' } }>
+              { mapDiv }
+            </div>
           </div>
-          <Itinerary
-            itinerary={itinerary} />
         </Paper>
       );
 

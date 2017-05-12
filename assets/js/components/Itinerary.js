@@ -16,6 +16,13 @@ class ItineraryCard extends React.Component {
         maxHeight: '500px'
       }
     };
+
+    this.durations = {
+      '0.5': 'half-day',
+      '1': 'full day',
+      '1.5': 'day and a half',
+      '2': '2 days'
+    }
   }
 
   render() {
@@ -24,15 +31,6 @@ class ItineraryCard extends React.Component {
     spot = spot.replace(/\b\w/g, l => l.toUpperCase()); // capitalize
     content = content.substring(0, 200);
 
-    let newday;
-    if (duration > 1 || (acumTime * 2) % 2 == 0) {
-      newday = (
-        <div style={{'textAlign': 'right', 'fontSize': '10px'}}>
-          day {parseInt(acumTime)}
-          <hr/>
-        </div>
-      );
-    }
     const cardTitle = (
       <CardTitle title={ spot } subtitle={ city } />
     );
@@ -40,13 +38,12 @@ class ItineraryCard extends React.Component {
     return (
       <Card style={ style }>
         <CardHeader
-          title={ spot }
-          subtitle={ city }
+          title={ `Day ${ Math.ceil(acumTime) }` }
+          subtitle={ this.durations[duration.toString()] }
           avatar={ image } />
         <CardMedia overlay={ cardTitle }>
           <img src={ image } style={ this.styles.image } />
         </CardMedia>
-        <CardTitle title={ spot } subtitle={ city } />
         <CardText>
           { content } 
         </CardText>
@@ -75,7 +72,7 @@ export default class Itinerary extends React.Component  {
       child: {
         flexGrow: '1',
         margin: '10px 0 0 2%',
-        minWidth: '250px',
+        minWidth: '175px',
         width: 'calc(100% * (1/4) - 10px - 1px)',
       }
     }
