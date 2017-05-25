@@ -6,7 +6,7 @@ and rate how much you want to see it.
 """
 
 import numpy as np
-import wikipedia
+# import wikipedia
 
 class Grid:
     
@@ -26,6 +26,8 @@ class Grid:
         city: string city name
           i.e. 'Barcelona'
         """
+        
+        """
         def get_info(spot):
             name, time, rating = spot
             options = wikipedia.search(city + " " + name)
@@ -36,6 +38,12 @@ class Grid:
                 content = wiki.content
                 images = wiki.images[0]
             return (name, int(2*time), rating, content, images)
+
+        self.itinerary = list(map(get_info, itinerary))
+        """
+        def get_info(spot):
+            name, time, rating = spot
+            return (name, int(2*time), rating)
 
         self.itinerary = list(map(get_info, itinerary))
         self.buckets = length * 2 # length of the trip in buckets of half day
@@ -90,5 +98,5 @@ class Grid:
         self.optimize()
         shape = self.grid.shape
         optim = self.grid[shape[0] - 1][shape[1] - 1]
-        optim = map(lambda x: (x[0], float(x[1]) / 2, x[2], x[3], x[4]), optim)
+        optim = map(lambda x: (x[0], float(x[1]) / 2, x[2]), optim)
         return optim

@@ -15,12 +15,11 @@ def plan(request):
     grid = Grid(options, int(body['days']), body["city"])
     optim_itinerary = []
     for spot in grid.get_optim():
+        print(spot)
         optim_itinerary.append({
             "spot": spot[0],
             "duration": spot[1],
             "rating": spot[2],
-            "content": spot[3],
-            "image": spot[4],
             "city": body["city"]
         })
 

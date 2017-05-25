@@ -81,8 +81,9 @@ export default class ItemCreator extends React.Component  {
   }
 
   render() {
-    const text1 = "Rate with stars to add your new spot in your wishlist";
-    const text2 = "Add attractions of your choice";
+    // const text1 = "Rate with stars to add your new spot in your wishlist";
+    const text1 = "A museum, monument...";
+    const text2 = <span><b>1.</b> Add attractions of your choice</span>;
     const maxRate = 6;
 
     const {
@@ -107,6 +108,7 @@ export default class ItemCreator extends React.Component  {
           handleToogle={ this.handleToogle }
           timeslot={ timeslot } />
 
+        <p><b>3.</b> Rate with stars to add the attraction in your wishlist:<br/>(1 star - not interested in visiting, 6 stars - very interested in visiting)</p>
         <Rating
           ref="rating"
           value={ rating }

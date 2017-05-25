@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 // import PropTypes from 'prop-types';
 import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
+import axios from 'axios';
 
 import { Transition } from 'react-move'
 import { Rating } from 'material-ui-rating';
@@ -14,7 +16,18 @@ class ItineraryCard extends React.Component {
     this.styles = {
       image: {
         maxHeight: '500px'
-      }
+      },
+      progress: {
+        margin: '50px 0 50px 0',
+        textAlign: 'center',
+      },
+    };
+
+    this.state = {
+      image: null,
+      content: "",
+      url: "",
+      ready: false,
     };
 
     this.durations = {
@@ -25,34 +38,70 @@ class ItineraryCard extends React.Component {
     }
   }
 
-  render() {
-    const { item, acumTime, style } = this.props;
-    let { image, duration, spot, rating, content, city } = item;
-    spot = spot.replace(/\b\w/g, l => l.toUpperCase()); // capitalize
-    content = content.substring(0, 200);
+  componentWillMount() {
+    let { spot, city } = this.props.item;
 
+    axios.create({
+      baseURL: '/cities/',
+      timeout: 10000,
+      headers: { 'X-CSRFToken': this.props.csrftoken }
+    }).get(`${city}/attractions/${spot}/`, {}).then(res => {
+      this.setState({
+        image: res.data.images[0],
+        content: res.data.summary,
+        url: res.data.url,
+        ready: true,
+      });
+    });
+  }
+
+  render() {
+    let { content, image, url, ready } = this.state;
+    const { item, acumTime, style } = this.props;
+    let { duration, spot, rating, city } = item; // content, image
+
+    spot = spot.replace(/\b\w/g, l => l.toUpperCase()); // capitalize
+    content = content.split(' ').slice(0, 100).join(' ') + '...'; // first 100 words
     const cardTitle = (
       <CardTitle title={ spot } subtitle={ city } />
     );
 
-    return (
-      <Card style={ style }>
-        <CardHeader
-          title={ `Day ${ Math.ceil(acumTime) }` }
-          subtitle={ this.durations[duration.toString()] }
-          avatar={ image } />
-        <CardMedia overlay={ cardTitle }>
-          <img src={ image } style={ this.styles.image } />
-        </CardMedia>
-        <CardText>
-          { content } 
-        </CardText>
-        <CardActions>
-          <FlatButton label="See More" />
-          <FlatButton label="Remove" />
-        </CardActions>
-      </Card>
-    );
+    if (ready) {
+      return (
+        <Card style={ style } className="card">
+          <CardHeader
+            title={ `Day ${ Math.ceil(acumTime) }` }
+            subtitle={ this.durations[duration.toString()] }
+            avatar={ image }
+          />
+          <CardMedia overlay={ cardTitle }>
+            <img src={ image } style={ this.styles.image } />
+          </CardMedia>
+          <CardText>
+            { content } 
+          </CardText>
+          <CardActions>
+            <FlatButton
+              label="See More"
+              href={ url }
+            />
+            <FlatButton label="Remove" />
+          </CardActions>
+        </Card>
+      );
+    } else {
+      return (
+        <Card style={ style } className="card">
+          <CardMedia overlay={ cardTitle }>
+            <CircularProgress
+              style={ this.styles.progress }
+              size={ 80 }
+              thickness={ 5 }
+            /> 
+          </CardMedia>
+        </Card>
+      );
+    }
   }
 }
 
@@ -72,13 +121,15 @@ export default class Itinerary extends React.Component  {
       child: {
         flexGrow: '1',
         margin: '10px 0 0 2%',
-        minWidth: '175px',
+        minWidth: '275px',
+        padding: '15px',
         width: 'calc(100% * (1/4) - 10px - 1px)',
       }
     }
   }
   render() {
     let acumTime = 0;
+    let csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     return (
       <div style={ this.styles.flex }>
         {this.props.itinerary.map(item => {
@@ -88,7 +139,9 @@ export default class Itinerary extends React.Component  {
               style={ this.styles.child }
               key={ item.spot }
               acumTime={ acumTime }
-              item={ item } />
+              item={ item }
+              csrftoken={ csrftoken }
+            />
           );
         })}
       </div>

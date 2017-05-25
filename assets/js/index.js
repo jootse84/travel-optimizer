@@ -32,10 +32,6 @@ class App extends React.Component {
     this.styles = {
       form: {
         display: 'table',
-        width: '70vw',
-        opacity: '0.9',
-        margin: '20px 15vw 10px 15vw',
-        padding: '20px 20px 10px 20px',
         gridTemplateColumns: '1fr 2fr',
       },
       form2: {
@@ -225,16 +221,18 @@ class App extends React.Component {
       */
 
       content = (
-        <Paper style={ this.styles.form } zDepth={ 3 }>
-
+        <Paper
+          className="paper"
+          style={ this.styles.form }
+          zDepth={ 3 }
+        >
           <div style={ { width: 'calc(100%)' } }>
-            <div style={ { width: 'calc(50%)', float: 'left' } }>
-              <Itinerary
-                itinerary={ itinerary } />
-            </div>
-            <div style={ { marginLeft: 'calc(55%)' } }>
-              { mapDiv }
-            </div>
+            { mapDiv }
+          </div>
+          <div style={ { width: 'calc(100%)' } }>
+            <Itinerary
+              itinerary={ itinerary }
+            />
           </div>
         </Paper>
       );
@@ -249,7 +247,11 @@ class App extends React.Component {
       } = this.state;
 
       content = (
-        <Paper style={this.styles.form} zDepth={3}>
+        <Paper
+          className="paper"
+          style={ this.styles.form }
+          zDepth={ 3 }
+        >
           <div style={this.styles.flex}>
             <div style={this.styles.flex1}>
               <AutoComplete

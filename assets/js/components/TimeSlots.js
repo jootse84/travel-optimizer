@@ -9,6 +9,22 @@ export default class TimeSlots extends React.Component  {
   constructor(props) {
     super(props);
 
+    if (window.innerWidth < 700) {
+      this.labels = [
+        <span>&frac12;</span>,
+        <span>1</span>,
+        <span>1+&frac12;</span>,
+        <span>2</span>
+      ];
+    } else {
+      this.labels = [
+        <span>&frac12; day</span>,
+        <span>1 day</span>,
+        <span>1+&frac12; day</span>,
+        <span>2 days</span>
+      ];
+    }
+
     this.styles = {
       timeslots: {
         display: 'flex',
@@ -19,6 +35,10 @@ export default class TimeSlots extends React.Component  {
       timeslot: {
         flex: '1 1 auto',
         display: 'inline-flex',
+      },
+      label: {
+        color: 'rgba(0, 0, 0, 0.7)',
+        //fontSize: 'small',
       },
     };
 
@@ -42,43 +62,46 @@ export default class TimeSlots extends React.Component  {
     } = this.props
 
     return (
+      <div>
+      <p><b>2.</b> How much time are you planning to spend there? (in days)</p>
       <div style={ this.styles.timeslots }>
         <Toggle
-          label="&frac12; day"
+          label={ this.labels[0] }
           labelPosition="right"
-          style={ this.styles.toggle }
+          labelStyle={ this.styles.label }
           toggled={ timeslot == 0 }
           defaultToggled={ true }
           style={ this.styles.timeslot }
           onToggle={ (event, isInputChecked) => handleToogle(0) }
         />
         <Toggle
-          label="1 day"
+          label={ this.labels[1] }
           labelPosition="right"
-          style={ this.styles.toggle}
+          labelStyle={ this.styles.label }
           toggled={ timeslot == 1 }
           defaultToggled={ false }
           style={ this.styles.timeslot }
           onToggle={ (event, isInputChecked) => handleToogle(1) }
         />
         <Toggle
-          label="1+&frac12; day"
+          label={ this.labels[2] }
           labelPosition="right"
-          style={ this.styles.toggle }
+          labelStyle={ this.styles.label }
           toggled={ timeslot == 2 }
           defaultToggled={ false }
           style={ this.styles.timeslot }
           onToggle={ (event, isInputChecked) => handleToogle(2) }
         />
         <Toggle
-          label="2 days"
+          label={ this.labels[3] }
           labelPosition="right"
-          style={ this.styles.toggle }
+          labelStyle={ this.styles.label }
           toggled={ timeslot == 3 }
           defaultToggled={ false }
           style={ this.styles.timeslot }
           onToggle={ (event, isInputChecked) => handleToogle(3) }
         />
+      </div>
       </div>
     );
   }
