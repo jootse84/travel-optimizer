@@ -102,7 +102,8 @@ export default class ItemCreator extends React.Component  {
           hintText={ text1 }
           fullWidth={ true }
           floatingLabelText={ text2 }
-          style={ this.styles.spot } />
+          style={ this.styles.spot }
+        />
 
         <TimeSlots
           handleToogle={ this.handleToogle }

@@ -9,6 +9,7 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
+
 // icons at: https://material.io/icons/#ic_map
 // https://github.com/callemall/material-ui/blob/master/src/svg-icons/
 import MapsMap from 'material-ui/svg-icons/maps/map';
@@ -56,11 +57,11 @@ class App extends React.Component {
       flex1: {
         flex: 1,
         minWidth: '200px',
-        margin: '5px',
+        margin: '5px 25px 35px 5px',
       },
       flex2: {
         flex: 2,
-        margin: '5px',
+        margin: '5px 5px 15px 5px',
       }
     };
 
@@ -121,7 +122,7 @@ class App extends React.Component {
       this.cities.getCities(value, (result) => {
         this.setState({
           cities: result,
-          city: value
+          city: value,
         });
       });
     }
@@ -177,7 +178,7 @@ class App extends React.Component {
       startDate,
       endDate,
       itinerary,
-      loading
+      loading,
     } = this.state;
     let content;
 
@@ -243,7 +244,7 @@ class App extends React.Component {
         city,
         cities,
         spots,
-        timeslot
+        timeslot,
       } = this.state;
 
       content = (
@@ -256,7 +257,7 @@ class App extends React.Component {
             <div style={this.styles.flex1}>
               <AutoComplete
                 ref="city"
-                value={ city }
+                open={ true }
                 onUpdateInput={ this.handleCityChange }
                 dataSource={ cities }
                 fullWidth={ true }

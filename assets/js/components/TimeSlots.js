@@ -37,7 +37,7 @@ export default class TimeSlots extends React.Component  {
         display: 'inline-flex',
       },
       label: {
-        color: 'rgba(0, 0, 0, 0.7)',
+        color: 'rgba(0, 0, 0, 0.8)',
         //fontSize: 'small',
       },
     };

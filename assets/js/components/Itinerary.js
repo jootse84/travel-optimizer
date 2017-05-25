@@ -123,7 +123,7 @@ export default class Itinerary extends React.Component  {
         margin: '10px 0 0 2%',
         minWidth: '275px',
         padding: '15px',
-        width: 'calc(100% * (1/4) - 10px - 1px)',
+        //width: 'calc(100% * (1/4) - 10px - 1px)',
       }
     }
   }
