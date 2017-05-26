@@ -99,4 +99,4 @@ class Grid:
         shape = self.grid.shape
         optim = self.grid[shape[0] - 1][shape[1] - 1]
         optim = map(lambda x: (x[0], float(x[1]) / 2, x[2]), optim)
-        return optim
+        return list(optim)

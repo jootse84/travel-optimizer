@@ -39,6 +39,31 @@ class Map:
                     pass
                 return
 
+            for location in self.locations:
+                worker(location, self.city)
+            mCluster.save(self.file)
+
+        except:
+            print('error retrieving city - {}'.format(city))
+            return
+
+    def createAsync(self):
+        gcode = self.geocode(self.city)
+        try:
+            mCluster = folium.Map(location=[gcode.latitude, gcode.longitude], zoom_start=13)
+            marker_cluster = folium.MarkerCluster().add_to(mCluster)
+
+            def worker(location, city):
+                gcode = self.geocode(location + " " + city)
+                try:
+                    folium.Marker([gcode.latitude, gcode.longitude], popup=location,
+                        icon=folium.Icon(color="green", icon='no-sign')
+                    ).add_to(marker_cluster)
+                except:
+                    print('error retrieving location - {}'.format(location + " " + city))
+                    pass
+                return
+
             def createMap(threads, file_name):
                 for thread in threads:
                     thread.join()

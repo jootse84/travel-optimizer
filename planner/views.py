@@ -2,39 +2,57 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from planner.modules.grid import Grid
 from planner.modules.map import Map
+from functools import reduce
 
 import json
 import uuid
+import math
 
 def plan(request):
     body = json.loads(request.body.decode('utf-8'))
-    map_id = str(uuid.uuid4())
     options = [(spot["name"], float(spot["duration"]), int(spot["rating"]))
                 for spot in body['spots']]
 
     grid = Grid(options, int(body['days']), body["city"])
-    optim_itinerary = []
-    for spot in grid.get_optim():
-        print(spot)
-        optim_itinerary.append({
-            "spot": spot[0],
-            "duration": spot[1],
-            "rating": spot[2],
-            "city": body["city"]
-        })
+    optim_itinerary = sorted(grid.get_optim(), key=lambda k: k[1]) # sort by duration
 
-    result = {}
-    result['itinerary'] = sorted(optim_itinerary, key=lambda k: k['duration'])
-    result['city'] = body["city"]
-    result['map'] = map_id
+    duration = reduce(lambda x, y: x + y, map(lambda k: k[1], optim_itinerary))
+    itinerary =[{'label': 'Day {}'.format(str(day+1)), 'day': day, 'attractions': []}
+        for day in range(math.ceil(duration))]
 
-    newmap = Map(body["city"], [loc['spot'] for loc in result['itinerary']],
+    # build dict with itinerary per days
+    acum_time = 0
+    for spot in optim_itinerary:
+        for day in range(math.floor(acum_time), math.ceil(acum_time + spot[1])):
+            itinerary[day]['attractions'].append({
+                "spot": spot[0],
+                "duration": spot[1],
+                "rating": spot[2]
+            })
+        acum_time = acum_time + spot[1]
+
+    result = {
+        'duration': duration,
+        'city': body["city"],
+        'itinerary': itinerary
+    }
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+def createMap(request):
+    body = json.loads(request.body.decode('utf-8'))
+    map_id = str(uuid.uuid4())
+
+    attrs = []
+    for day in body['itinerary']:
+        attrs.extend(day['attractions'])
+
+    newmap = Map(body["city"], list(set([attr['spot'] for attr in attrs])),
                     file_name="templates/maps/map_{}.html".format(map_id))
     newmap.create()
 
-    return HttpResponse(json.dumps(result), content_type='application/json')
+    return HttpResponse(json.dumps({'id': map_id}), content_type='application/json')
 
-def map(request):
+def renderMap(request):
     file_name = "maps/map_{}.html".format(request.GET['id'])
     return render(request, file_name, {})
 

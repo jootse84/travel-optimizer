@@ -10,9 +10,18 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 
+import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
+import FontIcon from 'material-ui/FontIcon';
+import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
+import {Tabs, Tab} from 'material-ui/Tabs';
+
 // icons at: https://material.io/icons/#ic_map
 // https://github.com/callemall/material-ui/blob/master/src/svg-icons/
 import MapsMap from 'material-ui/svg-icons/maps/map';
+import ImagePictureAsPdf from 'material-ui/svg-icons/image/picture-as-pdf';
+import HardwareKeyboardBackspace from 'material-ui/svg-icons/hardware/keyboard-backspace';
+import SocialShare from 'material-ui/svg-icons/social/share';
+import CircularProgress from 'material-ui/CircularProgress';
 
 import { blue500 } from 'material-ui/styles/colors';
 
@@ -27,6 +36,137 @@ import Cities from './cities.js';
 
 injectTapEventPlugin();
 
+class DayItinerary extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.styles = {
+      nav: {
+        boxShadow: 'rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px',
+      },
+    };
+
+    this.state = {
+      map: false,
+      ready: false,
+    }
+
+    this.select = this.select.bind(this);
+  }
+
+  componentDidMount() {
+    let { itinerary, csrftoken, city } = this.props;
+    axios.create({
+      baseURL: '/',
+      timeout: 150000,
+      headers: {'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value}
+    }).post('map', { itinerary, city }).then(res => {
+      this.setState({
+        map_id: res.data.id,
+        ready: true,
+      });
+    });
+  }
+
+  select(id) {
+    switch(id) {
+      case 0:
+        this.props.goBack();
+        break;
+      case 1:
+        // not yet
+        break;
+      case 2:
+        let { map } = this.state;
+        this.setState({
+          map: !map,
+          selected: map ? null : 2,
+        });
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+    }
+  }
+
+  render() {
+    const { map, map_id, ready, selected } = this.state;
+
+    return (
+      <div>
+        { map ? (
+          <iframe
+            src={`/renderMap?id=${map_id}`}
+            className="map"
+          />
+        ):(
+          <Itinerary {...this.props} />
+        )}
+        <BottomNavigation
+          style={ this.styles.nav }
+          selectedIndex={ selected }
+        >
+          <BottomNavigationItem
+            label="Back"
+            icon={ <HardwareKeyboardBackspace /> }
+            onTouchTap={() => this.select(0)}
+          />
+          <BottomNavigationItem
+            label="Save as PDF"
+            icon={ <ImagePictureAsPdf /> }
+            onTouchTap={() => this.select(1)}
+          />
+          { ready ? (
+            <BottomNavigationItem
+              label="Map"
+              icon={ <MapsMap /> }
+              onTouchTap={() => this.select(2)}
+            />
+          ):(
+            <BottomNavigationItem
+              label="...loading map"
+              icon={ <CircularProgress size={25} thickness={ 2 } /> }
+            />
+          )}
+          <BottomNavigationItem
+            label="Share"
+            icon={ <SocialShare /> }
+            onTouchTap={() => this.select(3)}
+          />
+        </BottomNavigation>
+      </div>
+    );
+  }
+}
+
+class DayTabs extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { itinerary } = this.props;
+    return (
+      <Tabs>
+        {itinerary ? itinerary.map((day) =>
+          <Tab
+            label={day.label}
+            key={day.label}
+          >
+            <DayItinerary
+              day={ day }
+              {...this.props}
+            />
+          </Tab>
+        ) : (
+          <div> no attractions </div>
+        )}
+      </Tabs>
+    );
+  }
+};
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -34,11 +174,16 @@ class App extends React.Component {
       form: {
         display: 'table',
         gridTemplateColumns: '1fr 2fr',
+        padding: '20px 20px 10px 20px',
       },
       form2: {
+        display: 'table',
+        gridTemplateColumns: '1fr 2fr',
+      },
+      formLoading: {
         textAlign: 'center',
         width: '70vw',
-				opacity: '0.9',
+        opacity: '0.9',
         margin: '20px 15vw 10px 15vw',
         padding: '20px 20px 10px 20px',
         gridTemplateColumns: '1fr 2fr',
@@ -96,6 +241,12 @@ class App extends React.Component {
     this.clear = this.clear.bind(this);
   }
 
+  componentDidMount() {
+    this.setState({
+      csrftoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+    });
+  }
+
   handleStartDateChange(event, x) {
     let state = this.state
     state.startDate = x
@@ -135,36 +286,38 @@ class App extends React.Component {
   }
 
   handleOnTouchTap() {
-    let state = this.state;
-    let {spots, startDate, endDate, city} = this.state
+    let {
+      spots,
+      startDate,
+      endDate,
+      city,
+      csrftoken,
+    } = this.state
     let oneDay = 24*60*60*1000;
     endDate.setDate(endDate.getDate() + 1);
     let days = Math.round(Math.abs((endDate.getTime() - startDate.getTime()) / oneDay));
-    let csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
-    state["loading"] = true;
-    this.setState(state)
-
+    this.setState({ loading: true });
     axios.create({
       baseURL: '/',
       timeout: 150000,
-      headers: {'X-CSRFToken': csrftoken}
+      headers: { 'X-CSRFToken': csrftoken }
     }).post('plan', { spots, days, city }).then(res => {
-      let state = this.state;
-      state["loading"] = false;
-      state["itinerary"] = res.data.itinerary;
-      state["map"] = res.data.map;
-      this.setState(state);
+      this.setState({
+        loading: false,
+        itinerary: res.data.itinerary,
+        map: res.data.map,
+      });
     });
   }
 
   clear() {
-    let state = this.state;
-    state.disabled = true;
-    state.value = "";
-    state.timeslot = 0;
-    this.spots = [];
-    this.setState(state);
+    this.setState({
+      disabled: true,
+      value: "",
+      timeslot: 0,
+      spots: [],
+    });
   }
 
   formReady() {
@@ -179,9 +332,11 @@ class App extends React.Component {
       endDate,
       itinerary,
       loading,
+      city,
+      csrftoken,
     } = this.state;
-    let content;
 
+    let content;
     const loadingImg = (
       <img
         src="static/images/gears.svg"
@@ -191,50 +346,32 @@ class App extends React.Component {
     if (this.state.loading) {
 
       content = (
-        <Paper style={this.styles.form2} zDepth={3}>
+        <Paper style={this.styles.formLoading} zDepth={3}>
           { loadingImg }
         </Paper>
       );
 
     } else if (this.state.itinerary) {
+    //} else if (true) {
       let {
-        map,
         itinerary
       } = this.state;
-
-      let mapDiv = loadingImg;
-      if (map) {
-        mapDiv = (
-          <iframe
-            src={ `/map?id=${map}` }
-            style={{ width: 'calc(45%)' }} />
-        );
-      }
-
-      /*
-        <div style={ { width: '50px' } }>
-          <IconButton
-            href={"/map?id=" + map} 
-            tooltip="Show me a map!">
-            <MapsMap color={ blue500 } />
-          </IconButton>
-        </div>
-      */
+      //itinerary = [{"attractions": [{"rating": 5, "spot": "las ramblas", "duration": 0.5}], "day": 0, "label": "Day 1"}];
+      //city = "Barcelona";
 
       content = (
         <Paper
           className="paper"
-          style={ this.styles.form }
+          style={ this.styles.form2 }
           zDepth={ 3 }
         >
-          <div style={ { width: 'calc(100%)' } }>
-            { mapDiv }
-          </div>
-          <div style={ { width: 'calc(100%)' } }>
-            <Itinerary
-              itinerary={ itinerary }
-            />
-          </div>
+          <DayTabs
+            city={ city }
+            itinerary={ itinerary }
+            startDate={ startDate }
+            csrftoken={ csrftoken }
+            goBack={() => this.setState({ state: 0 }) }
+          />
         </Paper>
       );
 
@@ -270,31 +407,37 @@ class App extends React.Component {
                 maxDate={ endDate }
                 minDate={ startDate }
                 handleStartDateChange={ this.handleStartDateChange }
-                handleEndDateChange={ this.handleEndDateChange }/>
+                handleEndDateChange={ this.handleEndDateChange }
+              />
             </div>
 
             <div style={this.styles.flex2}>
               <ItemCreator
                 spots={ spots }
-                handleUpdateSpots={ this.handleUpdateSpots }/>
+                handleUpdateSpots={ this.handleUpdateSpots }
+              />
             </div>
           </div>
 
           <ItemList
             items={spots}
-            handleDeleteChip={this.handleDeleteChip} />
+            handleDeleteChip={this.handleDeleteChip}
+          />
           <RaisedButton
             label="Plan my trip!"
             primary={true}
             disabled={!this.formReady()}
             style={this.styles.button}
-            onTouchTap={this.handleOnTouchTap} />
+            onTouchTap={this.handleOnTouchTap}
+          />
         </Paper>
       );
     }
 
     return (
-      <MuiThemeProvider>{content}</MuiThemeProvider>
+      <MuiThemeProvider>
+        {content}
+      </MuiThemeProvider>
     )
   }
 }
