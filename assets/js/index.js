@@ -36,7 +36,7 @@ import Cities from './cities.js';
 
 injectTapEventPlugin();
 
-class DayItinerary extends React.Component {
+class DayTabs extends React.Component {
   constructor(props) {
     super(props);
 
@@ -92,6 +92,7 @@ class DayItinerary extends React.Component {
 
   render() {
     const { map, map_id, ready, selected } = this.state;
+    const { itinerary } = this.props;
 
     return (
       <div>
@@ -101,7 +102,21 @@ class DayItinerary extends React.Component {
             className="map"
           />
         ):(
-          <Itinerary {...this.props} />
+          <Tabs>
+            {itinerary ? itinerary.map((day) =>
+              <Tab
+                label={day.label}
+                key={day.label}
+              >
+                <Itinerary
+                  day={ day }
+                  {...this.props}
+                />
+              </Tab>
+            ) : (
+              <div> no attractions </div>
+            )}
+          </Tabs>
         )}
         <BottomNavigation
           style={ this.styles.nav }
@@ -139,33 +154,6 @@ class DayItinerary extends React.Component {
     );
   }
 }
-
-class DayTabs extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { itinerary } = this.props;
-    return (
-      <Tabs>
-        {itinerary ? itinerary.map((day) =>
-          <Tab
-            label={day.label}
-            key={day.label}
-          >
-            <DayItinerary
-              day={ day }
-              {...this.props}
-            />
-          </Tab>
-        ) : (
-          <div> no attractions </div>
-        )}
-      </Tabs>
-    );
-  }
-};
 
 class App extends React.Component {
   constructor(props) {
