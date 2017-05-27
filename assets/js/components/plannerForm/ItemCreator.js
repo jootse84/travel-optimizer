@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import TextField from 'material-ui/TextField';
 import { Rating } from 'material-ui-rating';
 
-import TimeSlots from './TimeSlots';
+import TimeSlots from './itemCreator/TimeSlots';
 
 export default class ItemCreator extends React.Component  {
 
