@@ -2,6 +2,8 @@ from django.http import HttpResponse
 
 import wikipedia
 import json
+import os
+
 from cities.modules.cities import Cities
 cities = Cities()
 
@@ -13,7 +15,7 @@ def getAttractionInfo(request, city, attraction):
     print(wiki)
     result = {
         "summary": wiki.summary,
-        "images": wiki.images,
+        "images": list(filter(lambda x: os.path.splitext(x)[1] in ['.jpg', '.png'], wiki.images)),
         "url": wiki.url
 #        "coordinates": wiki.coordinates
     }

@@ -28,19 +28,23 @@ class Map:
             mCluster = folium.Map(location=[gcode.latitude, gcode.longitude], zoom_start=13)
             marker_cluster = folium.MarkerCluster().add_to(mCluster)
 
-            def worker(location, city):
+            def worker(location, city, days):
                 gcode = self.geocode(location + " " + city)
+                colors = ["green", "red", "blue", "brown", "yellow", "orange", "purple"]
                 try:
-                    folium.Marker([gcode.latitude, gcode.longitude], popup=location,
-                        icon=folium.Icon(color="green", icon='no-sign')
+                    folium.Marker(
+                        [gcode.latitude, gcode.longitude],
+                        popup=location.title()+". "+str(len(days))+" day(s) in total visiting.",
+                        icon=folium.Icon(color=colors[days[0] % len(colors)], icon='info-sign')
                     ).add_to(marker_cluster)
+
                 except:
                     print('error retrieving location - {}'.format(location + " " + city))
                     pass
                 return
 
-            for location in self.locations:
-                worker(location, self.city)
+            for location in self.locations.keys():
+                worker(location, self.city, self.locations[location]['days'])
             mCluster.save(self.file)
 
         except:
@@ -71,7 +75,7 @@ class Map:
                 mCluster.save(file_name)
 
             threads = []
-            for location in self.locations:
+            for location in self.locations.keys:
                 t = threading.Thread(name=location, target=worker, args=(location, self.city, ))
                 threads.append(t)
                 t.start()

@@ -5,10 +5,10 @@ body {
 }
 
 ul.title {
-	display: grid;
+  display: grid;
   padding: 0;
-	color: #001b46;
-	font-family: sans-serif;
+  color: #001b46;
+  font-family: sans-serif;
   margin-left: 20vw;
   margin-right: 20vw;
   margin-top: 4vw;
@@ -20,7 +20,7 @@ ul li {
 }
 
 .form {
-	margin-top: 2vw;
+  margin-top: 2vw;
 }
 
 .title li:nth-child(1) {
@@ -58,6 +58,23 @@ p {
     width: 100vw;
     height: 50vh;
   }
+  .card {
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 500px;
+    padding: 15px;
+  }
+  .card-progress {
+    width: 100%;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 500px;
+    padding: 15px;
+  }
+
 }
 
 @media (min-width: 700px) and (max-width: 1200px) {
@@ -67,7 +84,27 @@ p {
     margin: 30px 10vw 10px 10vw;
   }
   .card {
+    display: grid;
     width: 50%;
+    grid-template-columns: 40% 60%;
+    grid-template-areas: "image text";
+    grid-gap: 10px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 500px;
+    padding: 15px;
+  }
+  .card-progress {
+    width: 50%;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 500px;
+    padding: 15px;
   }
   .map {
     width: 80vw;
@@ -82,7 +119,27 @@ p {
     margin: 30px 15vw 10px 15vw;
   }
   .card {
+    display: grid;
     width: 25%;
+    grid-template-columns: 40% 60%;
+    grid-template-areas: "image text";
+    grid-gap: 10px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 550px;
+    padding: 15px;
+  }
+  .card-progress {
+    width: 25%;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    flex-grow: 1;
+    margin: 10px 0 0 2%;
+    min-width: 550px;
+    padding: 15px;
   }
   .map {
     width: 70vw;

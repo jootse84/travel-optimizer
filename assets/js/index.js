@@ -34,6 +34,7 @@ class App extends React.Component {
       form2: {
         display: 'table',
         gridTemplateColumns: '1fr 2fr',
+        marginBottom: '50px',
       },
       formLoading: {
         textAlign: 'center',
@@ -49,7 +50,7 @@ class App extends React.Component {
       state: states['MAIN'],
       loading: false,
       // remove!!
-      city: "Barcelona",
+      /*city: "Barcelona",
       itinerary: [{
         "day": 0,
         "label": "Day 1",
@@ -61,9 +62,10 @@ class App extends React.Component {
         "day": 1,
         "label": "Day 2",
         "attractions": [
-          {"rating": 6, "duration": 1.0, "spot": "montjuic"}
+          {"rating": 6, "duration": 1.0, "spot": "montjuic"},
+          {"rating": 6, "duration": 0.5, "spot": "parc guell"}
         ]
-      }],
+      }],*/
     };
 
     this.onConfirmPlan = this.onConfirmPlan.bind(this);
@@ -73,7 +75,7 @@ class App extends React.Component {
     this.setState({
       csrftoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
       // remove!!
-      state: states['ITINERARY'],
+      // state: states['ITINERARY'],
     });
   }
 

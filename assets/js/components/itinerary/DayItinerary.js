@@ -6,9 +6,6 @@ import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
 
-import { Transition } from 'react-move'
-import { Rating } from 'material-ui-rating';
-
 import moment from 'moment'
 
 class ItineraryCard extends React.Component {
@@ -17,31 +14,11 @@ class ItineraryCard extends React.Component {
 
     this.styles = {
       image: {
-        height: '200px'
+        minHeight: '150px',
       },
       progress: {
         margin: '50px 0 50px 0',
         textAlign: 'center',
-      },
-      grid: {
-        display: 'grid',
-        gridTemplateColumns: '40% 60%',
-        gridTemplateAreas: '"image text"',
-        gridGap: '10px',
-        boxShadow: 'rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px',
-        borderRadius: '2px',
-        // flexbox
-        flexGrow: '1',
-        margin: '10px 0 0 2%',
-        minWidth: '275px',
-        padding: '15px',
-      },
-      flex: {
-        // just flexbox
-        flexGrow: '1',
-        margin: '10px 0 0 2%',
-        minWidth: '275px',
-        padding: '15px',
       },
       gridImage: {
         width: '100%',
@@ -61,14 +38,6 @@ class ItineraryCard extends React.Component {
       },
     };
 
-    this.state = {
-      image: null,
-      content: "",
-      url: "",
-      ready: false,
-      responsive: (window.innerWidth < 550),
-    };
-
     this.durations = {
       '0.5': 'half-day',
       '1': 'full day',
@@ -81,7 +50,7 @@ class ItineraryCard extends React.Component {
     const { item, city } = this.props;
     let {
       content,
-      image,
+      images,
       url,
       ready,
       duration,
@@ -91,76 +60,56 @@ class ItineraryCard extends React.Component {
 
     spot = spot.replace(/\b\w/g, l => l.toUpperCase()); // capitalize
     const cardTitle = (
-      <CardTitle title={ spot } subtitle={ city } />
+      <CardTitle
+        title={ spot }
+        subtitle={ city }
+      />
     );
 
     if (ready) {
-      content = content.split(' ').slice(0, 75).join(' ') + '...'; // first 75 words
-      if (!this.state.responsive) {
-        return (
-          <div style={this.styles.grid} className="card">
-            <Card style={ this.styles.gridImage }>
-              <CardHeader
-                title={ spot }
-                subtitle={ this.durations[duration.toString()] }
-                avatar={ image }
-              />
-              <CardMedia overlay={ cardTitle }>
-                <img src={ image } style={ this.styles.image } />
-              </CardMedia>
-            </Card>
-            <Card
-              style={ this.styles.gridText }
-              containerStyle={{ height: '100%' }}
-            >
-              <CardText>
-                { content } 
-              </CardText>
-              <CardActions>
-                <FlatButton
-                  label="See More"
-                  href={ url }
-                />
-              </CardActions>
-            </Card>
-          </div>
-        );
-      } else {
-        return (
-          <Card style={ this.styles.flex }>
+      // first 75 words
+      content = content.split(' ').slice(0, 75).join(' ') + '...'; 
+      return (
+        <div className="card">
+          <Card style={ this.styles.gridImage }>
             <CardHeader
               title={ spot }
               subtitle={ this.durations[duration.toString()] }
-              avatar={ image }
+              avatar={ images[0] }
             />
             <CardMedia overlay={ cardTitle }>
-              <img src={ image } style={ this.styles.image } />
+              <img
+                src={ images[1] ? images[1] : images[0] }
+                style={ this.styles.image }
+              />
             </CardMedia>
+          </Card>
+          <Card
+            style={ this.styles.gridText }
+            containerStyle={{ height: '100%' }}
+          >
             <CardText>
               { content } 
             </CardText>
             <CardActions>
-              <div style={ this.styles.buttons }> 
-                <FlatButton
-                  label="See More"
-                  href={ url }
-                />
-              </div>
+              <FlatButton
+                label="See More"
+                href={ url }
+              />
             </CardActions>
           </Card>
-        );
-      }
+        </div>
+      );
     } else {
-      let style = this.state.responsive? this.styles.flex: this.styles.grid;
       return (
-        <Card style={ style } className="card">
-          <CardMedia overlay={ cardTitle }>
-            <CircularProgress
-              style={ this.styles.progress }
-              size={ 80 }
-              thickness={ 5 }
-            /> 
-          </CardMedia>
+        <Card
+          className="card-progress"
+        >
+          <CircularProgress
+            style={ this.styles.progress }
+            size={ 80 }
+            thickness={ 5 }
+          /> 
         </Card>
       );
     }
@@ -173,9 +122,6 @@ export default class DayItinerary extends React.Component  {
     this.styles = {
       itinerary: {
         margin: '20px',
-      },
-      transition: {
-        'margin': '20px 0 20px 0'
       },
       flex: { //{'width': '50vw', 'margin': '20px 0 20px 0'}
         display: 'flex',

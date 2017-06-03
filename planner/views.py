@@ -7,6 +7,7 @@ from functools import reduce
 import json
 import uuid
 import math
+import pdfkit
 
 def plan(request):
     body = json.loads(request.body.decode('utf-8'))
@@ -42,11 +43,18 @@ def createMap(request):
     body = json.loads(request.body.decode('utf-8'))
     map_id = str(uuid.uuid4())
 
-    attrs = []
+    attrs = {}
     for day in body['itinerary']:
-        attrs.extend(day['attractions'])
+        for attr in day['attractions']:
+            name = attr['spot']
+            if name in attrs:
+                attrs[name]['days'].append(day['day'])
+            else:
+                attrs[name] = {
+                    'days': [ day['day'] ]
+                }
 
-    newmap = Map(body["city"], list(set([attr['spot'] for attr in attrs])),
+    newmap = Map(body["city"], attrs,
                     file_name="templates/maps/map_{}.html".format(map_id))
     newmap.create()
 
@@ -54,6 +62,11 @@ def createMap(request):
 
 def renderMap(request):
     file_name = "maps/map_{}.html".format(request.GET['id'])
+    return render(request, file_name, {})
+
+def pdf(request):
+    file_name = "maps/map_{}.html".format(request.GET['id'])
+    pdfkit.from_file('test.html', 'out.pdf')
     return render(request, file_name, {})
 
 def index(request):
