@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main-ddee1fe9defdb0b33402.js","path":"/home/jose/RC/trip-advisor/static/bundles/main-ddee1fe9defdb0b33402.js"}]}}
+{"status":"done","error":"ModuleBuildError","message":"Module build failed: SyntaxError: Unexpected token (102:15)\n\n  100 |     switch (stepIndex) {\n  101 |       case 0:\n> 102 |         return();\n      |                ^\n  103 |     }\n  104 |   }\n  105 | \n","chunks":{"main":[{"name":"main-b2866411274b3621acc4.js","path":"/home/jose/RC/trip-advisor/static/bundles/main-b2866411274b3621acc4.js"}]}}

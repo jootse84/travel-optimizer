@@ -56,7 +56,7 @@ p {
   }
   .map {
     width: 100vw;
-    height: 50vh;
+    height: 80vh;
   }
   .card {
     flex-grow: 1;
@@ -108,7 +108,7 @@ p {
   }
   .map {
     width: 80vw;
-    height: 50vh;
+    height: 80vh;
   }
 }
 
@@ -143,6 +143,6 @@ p {
   }
   .map {
     width: 70vw;
-    height: 50vh;
+    height: 80vh;
   }
 }

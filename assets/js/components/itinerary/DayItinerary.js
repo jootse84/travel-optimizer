@@ -1,10 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import PropTypes from 'prop-types';
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import PropTypes from 'prop-types';
+
+import {
+  Card,
+  CardActions,
+  CardHeader,
+  CardMedia,
+  CardTitle,
+  CardText
+} from 'material-ui/Card';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
+
+import { Responsive, WidthProvider } from 'react-grid-layout';
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 import moment from 'moment'
 
@@ -116,6 +127,10 @@ class ItineraryCard extends React.Component {
   }
 }
 
+
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+
+
 export default class DayItinerary extends React.Component  {
   constructor(props) {
     super(props);
@@ -131,31 +146,72 @@ export default class DayItinerary extends React.Component  {
       title: {
         textAlign: 'center',
       },
+      image: {
+        width: '100%',
+        height: '100%'
+      },
     }
   }
   render() {
     const { day, city, startDate } = this.props;
     let csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    let halfDayRows = 4;
+    let layouts = {
+      lg: [
+        {i: '0', x: 0, y: 0, w: 1, h: 1, static: true},
+        {i: '1', x: 0, y: 1, w: 1, h: halfDayRows, isDraggable: true, isResizable: true},
+        {i: '2', x: 3, y: 0, w: 1, h: 2 * halfDayRows, isDraggable: true}
+      ],
+      md: [
+        {i: '0', x: 0, y: 0, w: 1, h: 1, static: true},
+        {i: '1', x: 0, y: 0, w: 1, h: halfDayRows, isDraggable: true, isResizable: true},
+        {i: '2', x: 3, y: 0, w: 1, h: 2 * halfDayRows, isDraggable: true}
+      ],
+      sm: [
+        {i: '0', x: 0, y: 0, w: 1, h: 1, static: true},
+        {i: '1', x: 0, y: 0, w: 1, h: halfDayRows, isDraggable: true, isResizable: true},
+        {i: '2', x: 2, y: 0, w: 1, h: 2 * halfDayRows, isDraggable: true}
+      ],
+      xs: [
+        {i: '0', x: 0, y: 0, w: 1, h: 1, static: true},
+        {i: '1', x: 0, y: 0, w: 1, h: halfDayRows, isDraggable: true, isResizable: true},
+        {i: '2', x: 1, y: 0, w: 1, h: 2 * halfDayRows, isDraggable: true}
+      ],
+      xxs: [
+        {i: '0', x: 0, y: 0, w: 1, h: 1, static: true},
+        {i: '1', x: 0, y: 0, w: 1, h: halfDayRows, isDraggable: true, isResizable: true},
+        {i: '2', x: 1, y: 0, w: 1, h: 2 * halfDayRows, isDraggable: true}
+      ],
+    };
+    let indices = 0;
+
     return (
-      <div style={ this.styles.itinerary }>
-        <h1 style={ this.styles.title }>
-          { moment(startDate).add(day.day, 'days').format('LL') }
-        </h1>
-        <hr/>
-        <div style={ this.styles.flex }>
+        <div>
           {day.attractions.map(item => {
-            return (
-              <ItineraryCard
-                city={ city }
-                key={ item.spot }
-                item={ item }
-                csrftoken={ csrftoken }
-              />
-            );
+            indices = indices + 1;
+            if (item.images) {
+              return (
+                <div key={ indices }>
+                  <Card>
+                    <CardMedia overlay={<CardTitle
+                      title={ <div> {item.spot} <b> hoho </b></div> }
+                      subtitle={ item.city }
+                    />}>
+                      <img
+                        src={ item.images[0] }
+                        style={ this.styles.image }
+                      />
+                    </CardMedia>
+                  </Card>
+                </div>
+              );
+            } else {
+              return <div key={ indices }/>;
+            }
           })}
-        </div>
-      </div>
+</div>
     );
+
   }
 }
 

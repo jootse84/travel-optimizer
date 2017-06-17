@@ -16,7 +16,7 @@ export default class ItemCreator extends React.Component  {
         width: '100%',
       },
       spot: {
-        marginTop: '-24px',
+        //marginTop: '-24px',
       },
       rating: {
         height: '35px',

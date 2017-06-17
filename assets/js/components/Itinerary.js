@@ -16,6 +16,31 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import DayItinerary from './itinerary/DayItinerary';
 
+
+
+
+import { Responsive, WidthProvider } from 'react-grid-layout';
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarSeparator,
+  ToolbarTitle,
+} from 'material-ui/Toolbar';
+import {
+  Card,
+  CardActions,
+  CardHeader,
+  CardMedia,
+  CardTitle,
+  CardText
+} from 'material-ui/Card';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import MenuItem from 'material-ui/MenuItem';
+
+
 const STATUS = {
   ITINERARY: 0,
   MAP: 2,
@@ -33,6 +58,15 @@ export default class Itinerary extends React.Component {
       tabs: {
         height: '100%',
         width: '100%',
+      },
+      image: {
+        width: '100%',
+        height: '100%',
+        filter: 'contrast(1)',
+        WebkitFilter: 'contrast(1)',
+        MozFilter: 'contrast(1)',
+        OFilter: 'contrast(1)',
+        MsFilter: 'contrast(1)',
       },
     };
 
@@ -118,23 +152,144 @@ export default class Itinerary extends React.Component {
 
       default:
         const { itinerary } = this.state;
-        return (
-          <Tabs style={ this.styles.tabs }>
-            {itinerary ? itinerary.map((day) =>
-              <Tab
-                label={day.label}
-                key={day.label}
-              >
-                <DayItinerary
-                  day={ day }
-                  {...this.props}
-                />
-              </Tab>
-            ) : (
-              <div> no attractions </div>
-            )}
-          </Tabs>
-        );
+        const totalDays = itinerary.length;
+
+        if (totalDays > 0) {
+          const halfDayRows = 4;
+          const rowHeight = 56;
+
+          let layouts = {
+            lg: [],
+            md: [],
+            sm: [],
+            xs: [],
+            xxs: [],
+          };
+          let cards = [];
+
+          let indices = 0;
+          for (let day of itinerary.keys()) {
+            const {
+              attractions,
+              label,
+            } = itinerary[day];
+
+            // Day static card
+            let layout = {
+              i: indices.toString(),
+              x: day,
+              y: 0,
+              w: 1,
+              h: 1,
+              static: true
+            };
+            for (let key of Object.keys(layouts)) {
+              layouts[key].push(layout);
+            }
+
+            cards.push(
+              <div key={ indices }>
+                <Toolbar
+                  style={{ backgroundColor: 'rgb(212, 55, 28)', color: 'white' }}
+                >
+                  <ToolbarGroup>
+                    <ToolbarTitle
+                      text={ label }
+                      style={{ color: 'white' }}
+                    />
+                    <ToolbarSeparator />
+                  </ToolbarGroup>
+                  <ToolbarGroup>
+                    <IconMenu
+                      iconButtonElement={
+                        <IconButton touch={true}>
+                          <NavigationExpandMoreIcon />
+                        </IconButton>
+                      }
+                    >
+                      <MenuItem primaryText="Find me restaurant for lunch!" />
+                      <MenuItem primaryText="Find me restaurant for dinner!" />
+                    </IconMenu>
+                  </ToolbarGroup>
+                </Toolbar> 
+              </div>
+            );
+            indices ++;
+
+            let yPos = 1;
+            for (let attr of attractions) {
+              let duration = halfDayRows * 2 * attr.duration;
+              let layout = {
+                i: indices.toString(),
+                x: day,
+                y: yPos,
+                w: 1,
+                h: duration,
+                isDraggable: false,
+                isResizable: false
+              };
+              for (let key of Object.keys(layouts)) {
+                layouts[key].push(layout);
+              }
+
+              if (attr.images) {
+                cards.push(
+                  <div key={ indices.toString() }>
+                    <Card style={{ cursor: 'pointer' }}>
+                      <CardMedia overlay={<CardTitle
+                        title={ <div> {attr.spot}</div> }
+                        subtitle={ attr.city }
+                      />}>
+                        <img
+                          src={ attr.images[0] }
+                          style={ this.styles.image }
+                        />
+                      </CardMedia>
+                    </Card>
+                  </div>
+                );
+              } else {
+                cards.push(
+                  <div
+                    style={{ width: '100%', textAlign: 'center', marginTop: '20px' }}
+                    key={ indices.toString() }
+                  >
+                    <CircularProgress
+                      size={150}
+                      thickness={ 2 }
+                    />
+                  </div>
+                );
+              }
+              yPos += duration;
+              indices++;
+            }
+          }
+
+          const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
+          let columns = {
+            lg: totalDays,
+            md: Math.min(totalDays, 4),
+            sm: Math.min(totalDays, 2),
+            xs: 1, xxs: 1
+          };
+
+          console.log(layouts);
+          console.log(columns);
+
+          return (
+            <ResponsiveReactGridLayout
+              className="layout"
+              layouts={ layouts }
+              rowHeight={ rowHeight }
+              breakpoints={ breakpoints }
+              cols={ columns }
+            >
+              {cards}
+            </ResponsiveReactGridLayout>
+          );
+        }
+        return <div/>;
     }
   }
 
@@ -147,7 +302,6 @@ export default class Itinerary extends React.Component {
 
     return (
       <div>
-        { this.renderContent() }
         <BottomNavigation
           style={ this.styles.nav }
           selectedIndex={ selected }
@@ -180,6 +334,7 @@ export default class Itinerary extends React.Component {
             onTouchTap={() => this.setState({ selected: 3 })}
           />
         </BottomNavigation>
+        { this.renderContent() }
       </div>
     );
   }

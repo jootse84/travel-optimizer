@@ -50,8 +50,8 @@ class App extends React.Component {
       state: states['MAIN'],
       loading: false,
       // remove!!
-      /*city: "Barcelona",
-      itinerary: [{
+      city: "Barcelona",
+      /*itinerary: [{
         "day": 0,
         "label": "Day 1",
         "attractions": [
@@ -105,6 +105,16 @@ class App extends React.Component {
     });
   }
 
+  renderHeader() {
+    return(
+      <ul className="title">
+        <li><img src="/static/logo.png" width="200px"/></li>
+        <li><hr/></li>
+        <li><b>A good trip always starts with a great planning</b>.</li>
+      </ul>
+    );
+  }
+
   render() {
 
     switch (this.state.state) {
@@ -112,11 +122,15 @@ class App extends React.Component {
       case states.LOADING:
         return (
           <MuiThemeProvider>
-          <Paper style={this.styles.formLoading} zDepth={3}>
-            <img
-              src="static/images/gears.svg"
-              style={ { 'margin': '50px', 'opacity': '0.6' } }/>
-          </Paper>
+            <span>
+              { this.renderHeader() }
+              <Paper style={this.styles.formLoading} zDepth={3}>
+                <img
+                  src="static/images/gears.svg"
+                  style={ { 'margin': '50px', 'opacity': '0.6' } }
+                />
+              </Paper>
+            </span>
           </MuiThemeProvider>
         );
         break;
@@ -131,19 +145,19 @@ class App extends React.Component {
 
         return (
           <MuiThemeProvider>
-          <Paper
-            className="paper"
-            style={ this.styles.form2 }
-            zDepth={ 3 }
-          >
-            <Itinerary
-              city={ city }
-              itinerary={ itinerary }
-              startDate={ startDate }
-              csrftoken={ csrftoken }
-              goBack={() => this.setState({ state: 0 }) }
-            />
-          </Paper>
+            <Paper
+              className="paper"
+              style={ this.styles.form2 }
+              zDepth={ 3 }
+            >
+              <Itinerary
+                city={ city }
+                itinerary={ itinerary }
+                startDate={ startDate }
+                csrftoken={ csrftoken }
+                goBack={() => this.setState({ state: 0 }) }
+              />
+            </Paper>
           </MuiThemeProvider>
         );
         break;
@@ -151,15 +165,18 @@ class App extends React.Component {
       default:
         return (
           <MuiThemeProvider>
-          <Paper
-            className="paper"
-            style={ this.styles.form }
-            zDepth={ 3 }
-          >
-            <PlannerForm
-              onConfirmPlan={ this.onConfirmPlan }
-            />
-          </Paper>
+            <span>
+              { this.renderHeader() }
+              <Paper
+                className="paper"
+                style={ this.styles.form }
+                zDepth={ 3 }
+              >
+                <PlannerForm
+                  onConfirmPlan={ this.onConfirmPlan }
+                />
+              </Paper>
+            </span>
           </MuiThemeProvider>
         );
     }
